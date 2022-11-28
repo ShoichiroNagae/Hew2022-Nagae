@@ -1,0 +1,5 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: 中間ディレクトリ (x64\Debug\) に別のプロジェクト (DX22_00.vcxproj) と共有されているファイルが含まれています。これにより、クリーンしてリビルド動作が適切に行われない可能性があります。
+  winmain.cpp
+C:\Users\bomuh\Desktop\HEW2年度\プログラミング\HEW_3D\DX22_00\winmain.cpp(370,34): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\bomuh\Desktop\HEW2年度\プログラミング\HEW_3D\DX22_00\winmain.cpp(372,34): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+  DX22_00.vcxproj -> C:\Users\bomuh\Desktop\HEW2年度\プログラミング\HEW_3D\x64\Debug\HEW_3D.exe
