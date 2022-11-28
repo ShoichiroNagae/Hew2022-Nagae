@@ -13,7 +13,7 @@ void SceneManager::ChangeScene(SCENE scene)
 		delete pScene;
 	}
 
-	//‚X”Ô‹­‚¢
+	//‚X”Ôã‚¢
 	/// <summary>
 	/// ƒV[ƒ“‚Ì‘JˆÚ
 	/// </summary>
