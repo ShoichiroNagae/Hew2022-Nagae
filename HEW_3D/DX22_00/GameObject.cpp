@@ -6,7 +6,7 @@ using namespace DirectX;
 
 GameObject::GameObject()
 {
-	mModel = new Model();
+	mModel = nullptr;
 	mSpeed = 0.0f;
 }
 
@@ -22,16 +22,17 @@ void GameObject::Draw()
 
 void GameObject::Update()
 {
-	// 前向きベクトルを計算する
-	XMFLOAT3 forwardVector{};
+	// 前向きベクトルを作る
+	XMFLOAT3 forwardVector;
+
 	float radianY = XMConvertToRadians(mModel->mRotate.y-90.0f);
 	forwardVector.x = sinf(radianY);
 	forwardVector.z = cosf(radianY);
 	forwardVector.y = 0.0f;
-
+	// 前向きベクトルをメンバー変数に保存
 	mForwardVector = forwardVector;
 
-	// 移動処理
+	// 前向きベクトルと速度を使って前進する
 	mModel->mPos.x += forwardVector.x * mSpeed * gDeltaTime;
 	mModel->mPos.z += forwardVector.z * mSpeed * gDeltaTime;
 }
