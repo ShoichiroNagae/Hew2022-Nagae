@@ -152,6 +152,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="NormalObject.cpp" />
+    <ClCompile Include="OBB_HitCheck.cpp" />
     <ClCompile Include="ObjModelLoader.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="winmain.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelData.h" />
     <ClInclude Include="NormalObject.h" />
+    <ClInclude Include="OBB_HitCheck.h" />
     <ClInclude Include="ObjModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
