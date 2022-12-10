@@ -1,14 +1,3 @@
-//
-//
-//
-//
-//
-// //
-//
-// //
-//
-//
-
 #undef UNICODE  // Unicodeではなく、マルチバイト文字を使う
 
 //
@@ -144,8 +133,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			// メッセージボックスで修了確認
 			int result;
-			result = MessageBox(NULL, "終了してよろしいですか？",
-				"終了確認", MB_YESNO | MB_ICONQUESTION);
+			result = MessageBox(NULL, "ポーズ",
+				"", MB_YESNO | NULL);//MB_ICONQUESTION
 			if (result == IDYES) // 「はい」ボタンが押された時
 			{
 				// xボタンが押されたのと同じ効果を発揮する
@@ -385,6 +374,7 @@ void Game_Update()
 		pSwordModel->mRotate.y -= 0.04 * gDeltaTime;
 	if (Input_GetKeyDown('D'))
 		pSwordModel->mRotate.y += 0.04 * gDeltaTime;
+
 
 	gpCottage->Update();
 	/*gpGun->Update();*/
