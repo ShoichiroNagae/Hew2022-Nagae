@@ -11,6 +11,9 @@
 
 #undef UNICODE  // Unicodeではなく、マルチバイト文字を使う
 
+//
+// テスト
+
 #include <Windows.h>
 #include "Direct3d.h"
 #include "input.h"
