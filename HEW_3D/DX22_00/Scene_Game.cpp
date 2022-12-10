@@ -2,6 +2,7 @@
 
 void Scene_Game::Update()
 {
+	int x;
 }
 
 void Scene_Game::Draw()
