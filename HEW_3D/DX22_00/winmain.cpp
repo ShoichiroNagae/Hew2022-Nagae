@@ -281,14 +281,14 @@ void Game_Draw()
 	// ↓　自前の描画処理をここに書く *******
 
 	// ゲームオブジェクトを描画
-	gpCottage->Draw();
-	gpSword->Draw();
-
+	//地面
 	for (int i = 0; i < MAX_GROUND; i++){
 		for (int j = 0; j < MAX_GROUND; j++) {
 			gpGround[i][j]->Draw();
 		}
 	}
+	gpCottage->Draw();
+	gpSword->Draw();
 
 	// ダブルバッファの切り替え
 	d3d->swapChain->Present(0, 0);
@@ -304,7 +304,7 @@ void Game_Update()
 	if (gDeltaTime <= 0){
 		gDeltaTime = 1;
 	}
-
+// ****** カメラ処理 *************
 	// カメラ移動変数
 	static float angle = 0.0f; // 回転角度
 	static float zoom = 3.0f;  // ズーム
@@ -340,7 +340,7 @@ void Game_Update()
 
 	// カメラ注視点をコテージの位置にする
 	gpCamera->SetFocus(pCottageModel->mPos);
-
+//*******************************************
 	// キャラクター移動
 	// キャラクターが向いている方向に前進する
 	// 向き変更＝ADキー　前進＝Wキー
@@ -372,11 +372,16 @@ void Game_Update()
 	if (Input_GetKeyDown('D'))
 		pSwordModel->mRotate.y += 0.04 * gDeltaTime;
 
+// ********** 当たり判定 ************
+	// pSwordModel to 敵ModelmScaleの関数で判定を取る
+	// 
+// **********************************
+	
 	gpCottage->Update();
 	/*gpGun->Update();*/
 	gpSword->Update();
 
-	// カメラ追従処理
+//******** カメラ追従処理 *********
 	// 1.操作キャラの前向きベクトルを取ってくる
 
 	/*XMFLOAT3 forwardVec = gpGun->GetForwardVector();*/
