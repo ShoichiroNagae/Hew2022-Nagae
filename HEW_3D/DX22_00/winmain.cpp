@@ -16,6 +16,8 @@
 #include <vector>
 #include <xstring>
 
+// ‚Á‚Ä‚«
+
 
 #pragma comment (lib, "winmm.lib") // timeGetTimeŠÖ”‚Ì‚½‚ß
 
