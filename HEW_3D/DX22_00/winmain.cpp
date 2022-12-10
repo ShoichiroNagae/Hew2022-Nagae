@@ -1,3 +1,14 @@
+//
+//
+//
+//
+//
+// //
+//
+// //
+//
+//
+
 #undef UNICODE  // Unicodeではなく、マルチバイト文字を使う
 
 #include <Windows.h>
