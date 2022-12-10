@@ -14,6 +14,7 @@
 
 class ObjModelLoader
 {
+
 public:
 	// OBJファイルとテクスチャを読み込んでModelDataとして返す
 	ModelData Load(const char* pObjFileName, const wchar_t* pTexFileName);
@@ -38,7 +39,7 @@ private:
 	std::vector<F2> mUvList;
 	std::vector<ModelVertex> mVertexList;
 
-	FILE* mFp{};
+	FILE* mFp;
 
 };
 

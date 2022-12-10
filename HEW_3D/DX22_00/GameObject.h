@@ -2,11 +2,10 @@
 
 #include "Model.h"
 
-// このクラスを派生させて、いろいろなモノを作る
-// ・モデルを表示する
-// ・向いてる方向に移動する
+// このクラスからいろいろなモノを派生で作る
+// ・モデル表示機能
+// ・向いている方向に進む機能
 // ・前向きベクトルを返す機能
-
 class GameObject
 {
 
@@ -14,21 +13,23 @@ public:
 	GameObject();
 	~GameObject();
 	void Draw();
-	virtual void Update(); // 移動も担当
+	virtual void Update(); // 継承先でオーバーライドする前提
 
-	Model* GetModel(); // このクラスが持つModelオブジェクトを返す
-
+	// このクラスの表示に使われるModelオブジェクトを返す
+	Model* GetModel();
 	// 前向きベクトルを返す関数
 	DirectX::XMFLOAT3 GetForwardVector();
 
 	// 移動速度
 	float mSpeed;
 
-private:
-	Model* mModel; // このクラスで表示するモデル
+protected:
+	// このクラスで表示させるモデル
+	Model* mModel;
 
-	// 前向きベクトルを保存しておく
-	DirectX::XMFLOAT3 mForwardVector{};
+private:
+	// 前向きベクトルを保存しておく変数
+	DirectX::XMFLOAT3 mForwardVector;
 
 };
 

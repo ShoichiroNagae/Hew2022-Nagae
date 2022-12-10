@@ -6,7 +6,7 @@
 //      C言語で設定した頂点座標と同じ座標系
 
 
-// C++から定数バッファで転送されたデータがセットされる
+// C++から定数バッファで転送されてきたデータ
 cbuffer ConstantBufferMatrix : register(b1)
 {
 	matrix gWorld;
@@ -36,8 +36,7 @@ VS_OUTPUT vs_main(float4 inputPos : POSITION, // xy
 	// 画面比率で横長になってしまうのを調整する
 	//output.pos.x *= 480.0f / 640.0f;
 
-	// 頂点座標に行列をかける
-	output.pos = mul(output.pos, gWorld); // ワールド変換行列
+	output.pos = mul(output.pos, gWorld); // ワールド変換行列を頂点座標にかける
 	output.pos = mul(output.pos, gView);
 	output.pos = mul(output.pos, gProjection);
 

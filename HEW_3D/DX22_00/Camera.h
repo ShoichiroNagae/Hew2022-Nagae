@@ -7,21 +7,27 @@ class Camera
 {
 
 public:
-	// ビュー変換行列を返す
-	DirectX::XMMATRIX GetViewMatrix();
-
-	// カメラ位置を設定
+	// カメラの位置を設定する
 	void SetEye(DirectX::XMFLOAT3 newEye);
-	// カメラ注視点
+
+	// カメラの見ている場所を設定する
 	void SetFocus(DirectX::XMFLOAT3 newFocus);
-	// カメラ上方向ベクトル
+
+	// カメラの上方向を設定する
 	void SetUp(DirectX::XMFLOAT3 newUp);
 
-	// カメラに必要なパラメータ変数
+	// 出来上がったビュー変換行列を返す
+	DirectX::XMMATRIX GetViewMatrix();
+
+	// カメラに必要な変数
 	DirectX::XMFLOAT3 mEye, mFocus, mUp;
 
-private:
+	// 更新処理（毎ループ１回呼び出す）
+	virtual void Update();
 
+private:
+	// Update関数で計算したビュー変換行列を持つ
+	DirectX::XMMATRIX mViewMatrix;
 
 };
 

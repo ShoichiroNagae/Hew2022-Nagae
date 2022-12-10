@@ -34,7 +34,6 @@ void Input_Refresh()
 		gKeyState, sizeof(gKeyState));
 }
 
-// “ü—ÍƒNƒ‰ƒX
 Input::Input()
 {
 	ZeroMemory(mKeyState, sizeof(mKeyState));
