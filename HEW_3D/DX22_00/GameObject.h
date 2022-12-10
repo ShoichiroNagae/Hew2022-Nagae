@@ -24,7 +24,7 @@ public:
 	// 移動速度
 	float mSpeed;
 
-private:
+protected:
 	Model* mModel; // このクラスで表示するモデル
 
 	// 前向きベクトルを保存しておく

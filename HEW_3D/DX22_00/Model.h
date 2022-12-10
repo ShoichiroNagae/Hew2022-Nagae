@@ -9,7 +9,7 @@ class Model
 {
 
 public:
-	void Draw(); // 表示する
+	virtual void Draw(); // 表示する
 
 	// このクラスで表示する3Dデータをセットする
 	void SetModelData(ModelData model);
@@ -27,9 +27,17 @@ public:
 	// このモデルに適用するカメラオブジェクト
 	Camera* mCamera;
 
-private:
+protected:
 	// 3Dデータを持つ変数
 	ModelData mModelData;
+
+	struct ConstBufferData
+	{
+		DirectX::XMMATRIX world;
+		DirectX::XMMATRIX view;
+		DirectX::XMMATRIX projection;
+	};
+
 
 };
 

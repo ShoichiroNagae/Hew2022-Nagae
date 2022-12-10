@@ -37,6 +37,7 @@ ID3D11ShaderResourceView* gpTextureHalOsaka; // HAL OSAKA
 // GameObjectƒNƒ‰ƒX‚Ì•Ï”
 GameObject* gpCottage;
 GameObject* gpGun;
+GameObject* gpPlayer;
 GameObject* gpSword;
 
 constexpr auto MAX_GROUND = 10;

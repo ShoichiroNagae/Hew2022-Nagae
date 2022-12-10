@@ -3,14 +3,6 @@
 
 using namespace DirectX; // "DirectX::"をこれ以降省略できる
 
-struct ConstBufferData
-{
-	XMMATRIX world;
-	XMMATRIX view;
-	XMMATRIX projection;
-};
-
-
 // 定数バッファ用変数
 ID3D11Buffer* gpConstBuffer;
 

@@ -8,7 +8,10 @@
 #include "ObjModelLoader.h"
 #include "Model.h"
 #include "Camera.h"
+
 #include "GameObject.h"
+#include "BillboardObject.h"
+
 #include <map>
 #include <string>
 #include "Winmain.h"
@@ -204,23 +207,23 @@ void Game_Init()
 	pCottageModel->mPos.z = 2.0f;
 	pCottageModel->mCamera = gpCamera;
 
-	// 銃モデル読み込み
-	ObjModelLoader loader2;
-	gModelManager["gun"] = loader2.Load(
-		"assets/gun.obj", L"assets/gun.png");
+	//// 銃モデル読み込み
+	//loader = ObjModelLoader(); // ローダーを再呼び出し
+	//gModelManager["gun"] = loader.Load(
+	//	"assets/gun.obj", L"assets/gun.png");
 
-	// 銃用Modelオブジェクト生成
-	gpGun = new GameObject();
-	Model* pGunModel = gpGun->GetModel();
-	pGunModel->SetModelData(gModelManager["gun"]);
-	pGunModel->SetScale(1.5f);
-	pGunModel->mPos.z = 1.0f;
-	pGunModel->mRotate.y = 90.0f;
-	pGunModel->mCamera = gpCamera;
+	//// 銃用Modelオブジェクト生成
+	//gpGun = new GameObject();
+	//Model* pGunModel = gpGun->GetModel();
+	//pGunModel->SetModelData(gModelManager["gun"]);
+	//pGunModel->SetScale(1.5f);
+	//pGunModel->mPos.z = 1.0f;
+	//pGunModel->mRotate.y = 90.0f;
+	//pGunModel->mCamera = gpCamera;
 
 	// 地面モデル読み込み
-	ObjModelLoader loader3;
-	gModelManager["ground1"] = loader3.Load(
+	loader = ObjModelLoader();
+	gModelManager["ground1"] = loader.Load(
 		"assets/ground1.obj", L"assets/ground1.jpg"
 	);
 
@@ -239,9 +242,25 @@ void Game_Init()
 		}
 	}
 
+	// プレイヤーモデル(ビルボード)読み込み
+	loader = ObjModelLoader();
+	gModelManager["Player"] = loader.Load(
+		"assets/PlayerBoard.obj", L"assets/sword.png"
+	);
+	// プレイヤーモデル(ビルボード)生成
+	gpPlayer = new BillboardObject();
+	Model* pPlayerModel = gpPlayer->GetModel();
+	pPlayerModel->SetModelData(gModelManager["Player"]);
+	pPlayerModel->SetScale(0.3f);
+	pPlayerModel->mPos.z = 1.0f;
+	pPlayerModel->mPos.y = 1.0f;
+	pPlayerModel->mCamera = gpCamera;
+
+	
+
 	// ソードモデル読み込み
-	ObjModelLoader loader4;
-	gModelManager["Sword"] = loader4.Load(
+	loader = ObjModelLoader();
+	gModelManager["Sword"] = loader.Load(
 		"assets/sword.obj", L"assets/sword.png"
 	);
 
@@ -249,8 +268,10 @@ void Game_Init()
 	gpSword = new GameObject();
 	Model* pSwordModel = gpSword->GetModel();
 	pSwordModel->SetModelData(gModelManager["Sword"]);
-	pSwordModel->SetScale(0.03f);
+	pSwordModel->SetScale(0.015f);
+	pSwordModel->mPos.x = pPlayerModel->mPos.x + 0.5f;
 	pSwordModel->mPos.z = 1.0f;
+	pSwordModel->mPos.y = 1.0f;
 	pSwordModel->mRotate.y = 90.0f;
 	pSwordModel->mCamera = gpCamera;
 
@@ -288,6 +309,7 @@ void Game_Draw()
 		}
 	}
 	gpCottage->Draw();
+	gpPlayer->Draw();
 	gpSword->Draw();
 
 	// ダブルバッファの切り替え
@@ -353,11 +375,19 @@ void Game_Update()
 	//if (Input_GetKeyDown('S'))
 	//	gpGun->mSpeed = -0.001f;
 
+	gpPlayer->mSpeed = 0.0f;
 	gpSword->mSpeed = 0.0f;
-	if (Input_GetKeyDown('W'))
-		gpSword->mSpeed = 0.001f;
-	if (Input_GetKeyDown('S'))
-		gpSword->mSpeed = -0.001f;
+	
+	if (Input_GetKeyDown('W')) {
+		gpPlayer->mSpeed = 0.001f;
+		gpSword->mSpeed = gpPlayer->mSpeed;
+	}
+		
+	if (Input_GetKeyDown('S')) {
+		gpPlayer->mSpeed = -0.001f;
+		gpSword->mSpeed = gpPlayer->mSpeed;
+	}
+		
 
 	// キャラクターの方向転換
 	//Model* pGunModel = gpGun->GetModel();
@@ -379,6 +409,7 @@ void Game_Update()
 	
 	gpCottage->Update();
 	/*gpGun->Update();*/
+	gpPlayer->Update();
 	gpSword->Update();
 
 //******** カメラ追従処理 *********
@@ -437,6 +468,7 @@ void Game_Release()
 {
 	delete gpGun;
 	delete gpCottage;
+	delete gpPlayer;
 	delete gpSword;
 
 	for (int i = 0; i < MAX_GROUND; i++) {
