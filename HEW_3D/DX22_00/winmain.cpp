@@ -12,6 +12,7 @@
 #include "NormalObject.h"
 #include "BillboardObject.h"
 #include "CreateSquarePolygon.h"
+#include "HitCheck_2D.h"
 #include <map>  // 連想配列
 #include <vector>
 #include <xstring>
@@ -76,8 +77,8 @@ Camera* gpCamera;
 // デルタタイム用の変数
 DWORD gDeltaTime;
 
-
-
+// 当たり判定用の変数
+HitCheck_2D* gpHit;
 
 // WinMain関数を作る
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -322,6 +323,10 @@ void Game_Init()
 
 	// 追従カメラが追従する対象を設定
 	((BackCamera*)gpCamera)->SetTarget(gObjectManager["gun"]);
+
+	// 当たり判定
+	gpHit = new HitCheck_2D();
+	gpHit->Init();
 }
 
 
@@ -409,10 +414,16 @@ void Game_Update()
 	for (int i = 0; i < gShotManager.size(); i++)
 		gShotManager[i]->Update();
 
+	gpHit->set_Position(gObjectManager["gun"]->GetModel()->mPos, gObjectManager["2Dchar"]->GetModel()->mPos);
+	gpHit->set_Size(gObjectManager["gun"]->GetModel()->mScale.x, gObjectManager["2Dchar"]->GetModel()->mScale.x);
+
+	if (gpHit->check_IsHit())
+	{
+		gObjectManager.erase("2Dchar");
+	}
+
 
 	// カメラの更新処理（ビュー変換行列計算）
-
-
 	gpCamera->Update();
 
 	for (int i = 0; i < MAX_GROUND; i++)

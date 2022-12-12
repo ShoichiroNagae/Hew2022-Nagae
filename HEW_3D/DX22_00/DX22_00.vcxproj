@@ -149,10 +149,11 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Direct3D.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HitCheck_2D.cpp" />
+    <ClCompile Include="HitCheck_OBB.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="NormalObject.cpp" />
-    <ClCompile Include="OBB_HitCheck.cpp" />
     <ClCompile Include="ObjModelLoader.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="winmain.cpp" />
@@ -165,11 +166,12 @@
     <ClInclude Include="CreateSquarePolygon.h" />
     <ClInclude Include="Direct3D.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="HitCheck_2D.h" />
+    <ClInclude Include="HitCheck_OBB.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelData.h" />
     <ClInclude Include="NormalObject.h" />
-    <ClInclude Include="OBB_HitCheck.h" />
     <ClInclude Include="ObjModelLoader.h" />
   </ItemGroup>
   <ItemGroup>
