@@ -12,12 +12,7 @@
 // 関数のプロトタイプ宣言
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-// ゲームの画面描画の関数
-void Game_Init();
-void Game_Draw();
-void Game_Update();
-void Game_Release();
-
+// ゲーム初期化
 void Initialize(_In_ HINSTANCE hInstance, _In_ int nCmdShow);
 
 
@@ -28,9 +23,6 @@ ID3D11Buffer* gpVertexBuffer;
 
 // 頂点数を持つ変数
 int gNumVertex;
-
-// テクスチャ用の変数
-ID3D11ShaderResourceView* gpTextureHalOsaka; // HAL OSAKA
 
 extern ID3D11Buffer* gpConstBuffer;
 

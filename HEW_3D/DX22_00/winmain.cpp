@@ -104,8 +104,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			// ゲームループ
 			sceneManager->Update();
 			sceneManager->Draw();
-			//Game_Update(); // ゲーム処理
-			//Game_Draw();   // ゲーム描画
+
 			Input_Refresh(); // キー状態の更新
 		}
 	}

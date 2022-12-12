@@ -9,21 +9,21 @@ TitleScene::TitleScene()
 	d3d = Direct3D_Get();
 
 	// タイトルロゴを読み込む
-	LoadTexture(L"assets/title.png", &gpTextureTitle);
+ 	LoadTexture(L"assets/2D/title.png", &gpTextureTitle);
 	// 「Press Space Key」画像を読み込む
-	LoadTexture(L"assets/spacekey.png", &gpTextureSpaceKey);
+	LoadTexture(L"assets/2D/spacekey.png", &gpTextureSpaceKey);
 
 	// タイトルロゴの初期化
 	gpTitleLogo = new StaticObject();
 	gpTitleLogo->mSprite->SetTexture(gpTextureTitle);
 	gpTitleLogo->SetPosition(0.0f, 0.3f);
-	gpTitleLogo->SetSize(548.0f * 0.004f, 147.0f * 0.004f);
+	gpTitleLogo->SetSize(10.0f, 10.0f);
 
 	// 「Press Space Key」の初期化
 	gpSpaceKey = new StaticObject();
 	gpSpaceKey->mSprite->SetTexture(gpTextureSpaceKey);
 	gpSpaceKey->SetPosition(0.0f, -0.3f);
-	gpSpaceKey->SetSize(385.0f * 0.004f, 100.0f * 0.004f);
+	gpSpaceKey->SetSize(10.0f, 10.0f);
 
 }
 
@@ -52,11 +52,12 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 	d3d = Direct3D_Get();
+	d3d->swapChain->Present(0, 0);
 
 	// 画面の塗りつぶし処理
-	float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };  // rgba  0.0f-1.0f
-	d3d->context->ClearRenderTargetView(d3d->renderTarget,
-		color);
+	//float color[4] = { 1.0f, 0.0f, 0.0f, 0.0f };  // rgba  0.0f-1.0f
+	//d3d->context->ClearRenderTargetView(d3d->renderTarget,
+	//	color);
 
 	gpTitleLogo->Draw();
 	gpSpaceKey->Draw();

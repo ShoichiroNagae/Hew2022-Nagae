@@ -11,6 +11,7 @@ Sprite::Sprite()
 	bufferDesc.CPUAccessFlags = 0;
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
+
 	// バッファ作成関数（デバイスクラスのメンバ関数）を呼び出し
 	// キャラ01用
 	hr = d3d->device->CreateBuffer(&bufferDesc, NULL,
