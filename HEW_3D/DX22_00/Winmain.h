@@ -48,6 +48,10 @@ GameObject* gpGround[MAX_GROUND][MAX_GROUND];
 
 std::map<std::string, ModelData> gModelManager;
 
+// 平面モデル用関数
+ModelData CreateSquarePolygon(float width, float height, float uvWidth, float uvHeight, const wchar_t* texFile);
+
+
 // Cameraクラスの変数
 Camera* gpCamera;
 

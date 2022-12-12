@@ -14,6 +14,8 @@ public:
 	// このクラスで表示する3Dデータをセットする
 	void SetModelData(ModelData model);
 
+	// このクラスで表示するテクスチャデータを変更する
+	void ChangeTexData(const wchar_t* pTexFileName);
 	// 仮想世界（ワールド）上の位置を指定する座標
 	DirectX::XMFLOAT3 mPos;
 	// 回転角度

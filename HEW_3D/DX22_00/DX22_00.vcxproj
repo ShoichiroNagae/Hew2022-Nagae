@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BackCamera.cpp" />
     <ClCompile Include="BillboardModel.cpp" />
     <ClCompile Include="BillboardObject.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BackCamera.h" />
     <ClInclude Include="BillboardModel.h" />
     <ClInclude Include="BillboardObject.h" />
     <ClInclude Include="Scene_Base.h" />

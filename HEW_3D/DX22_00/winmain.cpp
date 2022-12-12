@@ -7,7 +7,7 @@
 #include "WICTextureLoader.h"
 #include "ObjModelLoader.h"
 #include "Model.h"
-#include "Camera.h"
+#include "BackCamera.h"
 
 #include "GameObject.h"
 #include "BillboardObject.h"
@@ -184,7 +184,7 @@ void Game_Init()
 		nullptr, &gpConstBuffer);
 
 	// カメラの作成
-	gpCamera = new Camera();
+	gpCamera = new BackCamera();
 
 	// 初期値設定
 	// 注意：eyeとfocusが同じだとダメ
@@ -245,7 +245,7 @@ void Game_Init()
 	// プレイヤーモデル(ビルボード)読み込み
 	loader = ObjModelLoader();
 	gModelManager["Player"] = loader.Load(
-		"assets/PlayerBoard.obj", L"assets/sword.png"
+		1.0f, 1.2f, 0.33f, 0.25f, L"assets/sword.png"
 	);
 	// プレイヤーモデル(ビルボード)生成
 	gpPlayer = new BillboardObject();
@@ -254,6 +254,7 @@ void Game_Init()
 	pPlayerModel->SetScale(0.3f);
 	pPlayerModel->mPos.z = 1.0f;
 	pPlayerModel->mPos.y = 1.0f;
+	pPlayerModel->mRotate.y = 90.0f;
 	pPlayerModel->mCamera = gpCamera;
 
 	
@@ -275,7 +276,8 @@ void Game_Init()
 	pSwordModel->mRotate.y = 90.0f;
 	pSwordModel->mCamera = gpCamera;
 
-	// ローダーに移行
+	//　カメラの追従対象を指定
+	((BackCamera*)gpCamera)->SetTarget(gpPlayer);
 
 }
 
@@ -320,14 +322,14 @@ void Game_Draw()
 void Game_Update()
 {
 	// デルタタイムが想定外の値になった場合の処理
-	if (gDeltaTime >= 100){
+	if (gDeltaTime >= 100) {
 		gDeltaTime = 0;
 	}
-	if (gDeltaTime <= 0){
+	if (gDeltaTime <= 0) {
 		gDeltaTime = 1;
 	}
-// ****** カメラ処理 *************
-	// カメラ移動変数
+	// ****** カメラ処理 *************
+		// カメラ移動変数
 	static float angle = 0.0f; // 回転角度
 	static float zoom = 3.0f;  // ズーム
 
@@ -346,48 +348,47 @@ void Game_Update()
 		zoom -= 0.01f * gDeltaTime;
 	if (Input_GetKeyDown(VK_DOWN))
 		zoom += 0.01f * gDeltaTime;
-
 	// ②カメラの注視点を中心にカメラを回転する
 
 	// カメラ位置X　＝　sinf(角度ラジアン)
 	// カメラ位置Z　＝　cosf(角度ラジアン)
 	// 原点を中心に半径1.0fの円周上の点を求める
-	Model* pCottageModel = gpCottage->GetModel();
 	float radian = XMConvertToRadians(angle);
 	gpCamera->mEye.x =
-		sinf(radian) * zoom + pCottageModel->mPos.x;
+		sinf(radian) * zoom;
 	gpCamera->mEye.z =
-		cosf(radian) * zoom + pCottageModel->mPos.z;
+		cosf(radian) * zoom + 2.0f;
 	gpCamera->mEye.y = 2.0f;
 
 	// カメラ注視点をコテージの位置にする
-	gpCamera->SetFocus(pCottageModel->mPos);
-//*******************************************
-	// キャラクター移動
-	// キャラクターが向いている方向に前進する
-	// 向き変更＝ADキー　前進＝Wキー
-	// 「前向きベクトル」を計算する
-	// 移動速度＝Wキーで決まる
-	
-	//gpGun->mSpeed = 0.0f;
-	//if (Input_GetKeyDown('W'))
-	//	gpGun->mSpeed = 0.001f;
-	//if (Input_GetKeyDown('S'))
-	//	gpGun->mSpeed = -0.001f;
+	gpCamera->SetFocus(gpCottage->GetModel()->mPos);
+
+	//*******************************************
+		// キャラクター移動
+		// キャラクターが向いている方向に前進する
+		// 向き変更＝ADキー　前進＝Wキー
+		// 「前向きベクトル」を計算する
+		// 移動速度＝Wキーで決まる
+
+		//gpGun->mSpeed = 0.0f;
+		//if (Input_GetKeyDown('W'))
+		//	gpGun->mSpeed = 0.001f;
+		//if (Input_GetKeyDown('S'))
+		//	gpGun->mSpeed = -0.001f;
 
 	gpPlayer->mSpeed = 0.0f;
 	gpSword->mSpeed = 0.0f;
-	
+
 	if (Input_GetKeyDown('W')) {
 		gpPlayer->mSpeed = 0.001f;
 		gpSword->mSpeed = gpPlayer->mSpeed;
 	}
-		
+
 	if (Input_GetKeyDown('S')) {
 		gpPlayer->mSpeed = -0.001f;
 		gpSword->mSpeed = gpPlayer->mSpeed;
 	}
-		
+
 
 	// キャラクターの方向転換
 	//Model* pGunModel = gpGun->GetModel();
@@ -397,65 +398,33 @@ void Game_Update()
 	//	pGunModel->mRotate.y += 0.04f * gDeltaTime;
 
 	Model* pSwordModel = gpSword->GetModel();
-	if (Input_GetKeyDown('A'))
-		pSwordModel->mRotate.y -= 0.04 * gDeltaTime;
-	if (Input_GetKeyDown('D'))
-		pSwordModel->mRotate.y += 0.04 * gDeltaTime;
-
+	Model* pPlayerModel = gpPlayer->GetModel();
+	if (Input_GetKeyDown('A')){
+		pPlayerModel->mRotate.y -= 0.04f * gDeltaTime;
+		pSwordModel->mRotate.y = pPlayerModel->mRotate.y;
+	}
+	if (Input_GetKeyDown('D')) {
+		pPlayerModel->mRotate.y += 0.04f * gDeltaTime;
+		pSwordModel->mRotate.y = pPlayerModel->mRotate.y;
+	}
 // ********** 当たり判定 ************
 	// pSwordModel to 敵ModelmScaleの関数で判定を取る
 	// 
 // **********************************
+
+// ***** テクスチャ書き換え（仮） **************
+	if (Input_GetKeyDown(VK_SPACE))
+		pPlayerModel->ChangeTexData(L"assets/ground1.jpg");
 	
+// **********************************
+
 	gpCottage->Update();
 	/*gpGun->Update();*/
 	gpPlayer->Update();
 	gpSword->Update();
 
-//******** カメラ追従処理 *********
-	// 1.操作キャラの前向きベクトルを取ってくる
-
-	/*XMFLOAT3 forwardVec = gpGun->GetForwardVector();*/
-	XMFLOAT3 forwardVec = gpSword->GetForwardVector();
-
-	// 2.その前向きベクトルを反転して，
-	// 後ろ向きベクトルを作る
-	XMFLOAT3 backVec{};
-	backVec.x = -forwardVec.x;
-	backVec.z = -forwardVec.z;
-	backVec.y = -forwardVec.y;
-
-	// 3.後ろ向きベクトルを使って，キャラの後ろにカメラの焦点を当てる
-	XMFLOAT3 camEye{};
-	/*camEye.x = pGunModel->mPos.x + backVec.x * 2.0f;
-	camEye.z = pGunModel->mPos.z + backVec.z * 2.0f;
-	camEye.y = pGunModel->mPos.y + backVec.y * 2.0f + 1.0f;*/
-
-	camEye.x = pSwordModel->mPos.x + backVec.x * 2.0f;
-	camEye.z = pSwordModel->mPos.z + backVec.z * 2.0f;
-	camEye.y = pSwordModel->mPos.y + backVec.y * 2.0f + 1.0f;
-
-	// 緩やかカメラを作る
-	// 1フレーム前のカメラ1を保存する変数
-	static XMFLOAT3 lastCamEye;
-	float blendFactor = 0.995f;
-	camEye.x = lastCamEye.x * blendFactor
-		+ camEye.x * (1.0f - blendFactor);
-	camEye.y = lastCamEye.y * blendFactor
-		+ camEye.y * (1.0f - blendFactor);
-	camEye.z= lastCamEye.z * blendFactor
-		+ camEye.z * (1.0f - blendFactor);
-	gpCamera->SetEye(camEye);
-	lastCamEye = camEye;
-
-	// カメラ注視点を設定
-	// 操作キャラの少し前を注視点にする
-	XMFLOAT3 camFocus{};
-	camFocus.x = pSwordModel->mPos.x + forwardVec.x;
-	camFocus.z = pSwordModel->mPos.z + forwardVec.z;
-	camFocus.y = pSwordModel->mPos.y + forwardVec.y;
-
-	gpCamera->SetFocus(camFocus);
+	// カメラアップデート
+	gpCamera->Update();
 
 	for (int i = 0; i < MAX_GROUND; i++) {
 		for (int j = 0; j < MAX_GROUND; j++) {
@@ -496,5 +465,3 @@ void Game_Release()
 
 	COM_SAFE_RELEASE(gpConstBuffer);
 }
-
-
