@@ -35,6 +35,6 @@ void SceneManager::Update() {
     m_pScene->Update();         //現在のシーンの更新関数
 }
 
-void SceneManager::Render() {
+void SceneManager::Draw() {
     m_pScene->Draw();           //現在のシーンの描画関数
 }

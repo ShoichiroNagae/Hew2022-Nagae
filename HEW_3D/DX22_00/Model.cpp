@@ -6,8 +6,6 @@ ID3D11Buffer* gpConstBuffer;
 
 using namespace DirectX; // "DirectX"namespace‚ğ¡ŒãÈ—ª‚·‚é
 
-
-
 void Model::Draw()
 {
 	DIRECT3D* d3d = Direct3D_Get();

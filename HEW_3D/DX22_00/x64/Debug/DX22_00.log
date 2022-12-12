@@ -1,16 +1,2 @@
-﻿  compilation header save succeeded; see C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\ps.h
-  compilation header save succeeded; see C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\vs.h
-  BackCamera.cpp
-  BillboardModel.cpp
-  BillboardObject.cpp
-  Camera.cpp
-  Direct3D.cpp
-  GameObject.cpp
-  Input.cpp
-  Model.cpp
-  NormalObject.cpp
-  ObjModelLoader.cpp
-  WICTextureLoader.cpp
-  winmain.cpp
-  コードを生成中...
-  DX22_00.vcxproj -> C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
+﻿  winmain.cpp
+  DX22_00.vcxproj -> C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
