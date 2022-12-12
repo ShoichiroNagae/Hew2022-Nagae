@@ -1,42 +1,38 @@
 #include "Model.h"
 #include "Direct3D.h"
 
-using namespace DirectX; // "DirectX::"をこれ以降省略できる
-
-struct ConstBufferData
-{
-	XMMATRIX world;
-	XMMATRIX view;
-	XMMATRIX projection;
-};
-
-
 // 定数バッファ用変数
 ID3D11Buffer* gpConstBuffer;
+
+using namespace DirectX; // "DirectX"namespaceを今後省略する
+
+
 
 void Model::Draw()
 {
 	DIRECT3D* d3d = Direct3D_Get();
-
+	static float ry; ry += 0.005f;
 	// 回転行列
-	static float ry;
 	XMMATRIX mxRotY = XMMatrixRotationY(
-		XMConvertToRadians(mRotate.y));		// Y軸回転
+			XMConvertToRadians(mRotate.y));  // Y軸回転
 	XMMATRIX mxRotX = XMMatrixRotationX(
-		XMConvertToRadians(mRotate.x));		// X軸回転 
+		XMConvertToRadians(mRotate.x));
 	XMMATRIX mxRotZ = XMMatrixRotationZ(
-		XMConvertToRadians(mRotate.z));		// Z軸回転
+		XMConvertToRadians(mRotate.z));
 
 	// 平行移動行列
-	XMMATRIX mxTrans = XMMatrixTranslation(
-		mPos.x, mPos.y, mPos.z);  // 立体の現在位置を表す変数を使って、平行移動の行列を作る
+	XMMATRIX mxTrans =
+		XMMatrixTranslation(
+			mPos.x, mPos.y, mPos.z);  // 立体の現在位置を表す変数を使って、平行移動の行列を作る
 
 	// 拡大縮小行列
-	XMMATRIX mxScale = XMMatrixScaling(
-		mScale.x, mScale.y, mScale.z);
+	XMMATRIX mxScale =
+		XMMatrixScaling(
+			mScale.x, mScale.y, mScale.z);
 
 	// ワールド変換行列を作成
-	XMMATRIX mxWorld = mxScale * mxRotZ * mxRotX * mxRotY * mxTrans;
+	XMMATRIX mxWorld = mxScale * 
+		mxRotZ * mxRotX * mxRotY * mxTrans;
 
 	// プロジェクション変換行列を作成
 	// 1: 視野角
@@ -63,9 +59,9 @@ void Model::Draw()
 
 	HRESULT hr = d3d->context->Map(gpConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData);
 	if (SUCCEEDED(hr)) {
-		ConstBufferData cbdata{};
+		ConstBufferData cbdata;
 
-		// カメラオブジェクトからビュー変換行列を取得
+		// Cameraからビュー変換行列を取得
 		XMMATRIX mxView = mCamera->GetViewMatrix();
 
 		cbdata.world = XMMatrixTranspose(mxWorld);
@@ -88,11 +84,13 @@ void Model::Draw()
 	d3d->context->Draw(mModelData.mNumVertex, 0);
 }
 
-void Model::SetModelData(ModelData model)	{
-	mModelData = model; 
+void Model::SetModelData(ModelData model)
+{
+	mModelData = model;
 }
 
-void Model::SetScale(float newScale){
+void Model::SetScale(float newScale)
+{
 	mScale.x = newScale;
 	mScale.y = newScale;
 	mScale.z = newScale;

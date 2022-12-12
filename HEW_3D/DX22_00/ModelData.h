@@ -19,6 +19,7 @@ struct ModelVertex
 	float u, v;			// テクスチャUV座標
 };
 
+
 // 色を表す構造体
 struct RGBA
 {

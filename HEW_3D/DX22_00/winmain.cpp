@@ -7,20 +7,85 @@
 #include "WICTextureLoader.h"
 #include "ObjModelLoader.h"
 #include "Model.h"
-#include "Camera.h"
+#include "BackCamera.h"
 #include "GameObject.h"
-#include <map>
-#include <string>
-#include "Winmain.h"
+#include "NormalObject.h"
+#include "BillboardObject.h"
+#include "CreateSquarePolygon.h"
+#include <map>  // 連想配列
+#include <vector>
+#include <xstring>
+
+// 持ってき
+
+
+#pragma comment (lib, "winmm.lib") // timeGetTime関数のため
+
+// マクロ定義
+#define CLASS_NAME    "DX21Smpl"// ウインドウクラスの名前
+#define WINDOW_NAME  "スケルトンプログラム"// ウィンドウの名前
+
+#define SCREEN_WIDTH (1024)	// ウインドウの幅
+#define SCREEN_HEIGHT (576+30)	// ウインドウの高さ
+
+// 構造体の定義
+
+// 関数のプロトタイプ宣言
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+// ゲームの画面描画の関数
+void Game_Init();
+void Game_Draw();
+void Game_Update();
+void Game_Release();
+
+
+// グローバル変数の宣言
+
+// 頂点バッファ用の変数
+ID3D11Buffer* gpVertexBuffer;
+
+// 頂点数を持つ変数
+int gNumVertex;
+
+// テクスチャ用の変数
+ID3D11ShaderResourceView* gpTextureHalOsaka; // HAL OSAKA
 
 extern ID3D11Buffer* gpConstBuffer;
+
 using namespace DirectX;
 
+#define MAX_GROUND  50
+// 横１０×縦１０の二次元配列
+GameObject* gpGround1[MAX_GROUND];
+GameObject* gpGround2[MAX_GROUND];
+GameObject* gpGround3[MAX_GROUND];
+GameObject* gpGround4[MAX_GROUND];
+
+// 弾マネージャー
+std::vector<GameObject*> gShotManager;
+
+// モデルマネージャー
+// 連想配列＝添え字を整数以外にできる配列
+std::map<std::string, ModelData> gModelManager;
+
+// オブジェクトマネージャー 連想配列で作成
+std::map <std::string, GameObject*> gObjectManager;
+
+// カメラクラスの変数
+Camera* gpCamera;
+
+// デルタタイム用の変数
+DWORD gDeltaTime;
+
+
+
+
 // WinMain関数を作る
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPSTR lpCmdLine, _In_ int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	LPSTR lpCmdLine, int nCmdShow)
 {
-	WNDCLASSEX wc{}; // WND = Window
+	WNDCLASSEX wc; // WND = Window
 
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.style = CS_CLASSDC;
@@ -37,15 +102,13 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	RegisterClassEx(&wc); // Windowsにウインドウ情報を登録
 
-	HWND hWnd;					// H=Handle=ポインタ WND=Window
-	hWnd = CreateWindowEx(0,	// 拡張ウィンドウスタイル
-		CLASS_NAME,				// ウィンドウクラスの名前
-		WINDOW_NAME,			// ウィンドウの名前
-		WS_OVERLAPPED
-		| WS_SYSMENU
-		| WS_MINIMIZEBOX,		// ウィンドウスタイル
-		CW_USEDEFAULT,			// ウィンドウの左上Ｘ座標
-		CW_USEDEFAULT,			// ウィンドウの左上Ｙ座標 
+	HWND hWnd; // H=Handle=ポインタ WND=Window
+	hWnd = CreateWindowEx(0,// 拡張ウィンドウスタイル
+		CLASS_NAME,// ウィンドウクラスの名前
+		WINDOW_NAME,// ウィンドウの名前
+		WS_OVERLAPPED | WS_SYSMENU | WS_MINIMIZEBOX,// ウィンドウスタイル
+		CW_USEDEFAULT,// ウィンドウの左上Ｘ座標
+		CW_USEDEFAULT,// ウィンドウの左上Ｙ座標 
 		SCREEN_WIDTH,// ウィンドウの幅
 		SCREEN_HEIGHT,// ウィンドウの高さ
 		NULL,// 親ウィンドウのハンドル
@@ -62,6 +125,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	Direct3D_Init(hWnd);
 
 	Game_Init();
+
+	
 
 	MSG msg;
 	// メインループ
@@ -81,7 +146,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		}
 		else
 		{
-			MeasureDeltaTime();	//デルタタイム計測
+			// デルタタイムの計測
+			static DWORD lastTime = timeGetTime(); // 前回計測時の時間
+			timeBeginPeriod(1); // 精度を１ミリ秒に上げる
+			DWORD nowTime = timeGetTime(); // 現在の時間
+			timeEndPeriod(1); // 精度を元に戻す
+			gDeltaTime = nowTime - lastTime; // 差分がデルタタイム
+			lastTime = nowTime; // 前回計測時間として保存
+
 			// ゲームループ
 			Game_Update(); // ゲーム処理
 			Game_Draw();   // ゲーム描画
@@ -154,22 +226,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-// デルタタイムの計測
-void MeasureDeltaTime()
-{
-	static DWORD lastTime = timeGetTime(); // 前回計測時の時間
-	timeBeginPeriod(1); // 精度を１ミリ秒に上げる
-	DWORD nowTime = timeGetTime(); // 現在の時間
-	timeEndPeriod(1); // 精度を元に戻す
-	gDeltaTime = nowTime - lastTime; // 差分がデルタタイム
-	lastTime = nowTime; // 前回計測時間として保存
-}
-
 void Game_Init()
 {
 	// 定数バッファ作成
 	// コンスタントバッファとして作成するための情報設定
-	D3D11_BUFFER_DESC contstat_buffer_desc{};
+	D3D11_BUFFER_DESC contstat_buffer_desc;
 	contstat_buffer_desc.ByteWidth = 4 * 4 * 4 * 4;	// バッファのサイズ（4x4行列x4個）
 	contstat_buffer_desc.Usage = D3D11_USAGE_DYNAMIC;		// 使用方法
 	contstat_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;	// バッファの種類(コンスタントバッファ)
@@ -180,43 +241,25 @@ void Game_Init()
 	Direct3D_Get()->device->CreateBuffer(&contstat_buffer_desc,
 		nullptr, &gpConstBuffer);
 
-	// カメラの作成
-	gpCamera = new Camera();
-
-	// 初期値設定
-	// 注意：eyeとfocusが同じだとダメ
-	// 注意：upのxyz全てゼロだとダメ
+	// カメラ作成
+	gpCamera = new BackCamera();
+	// カメラ初期値
+	// eyeとfocusが同じ座標だとダメ
 	gpCamera->SetEye(XMFLOAT3(0.0f, 0.0f, -2.0f));
 	gpCamera->SetFocus(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	// upは(0.0f,0.0f,0.0f)だとダメ
 	gpCamera->SetUp(XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	// ローダーに移行
 	// コテージモデル読み込み
 	ObjModelLoader loader;
 	gModelManager["cottage"] = loader.Load(
-		"assets/cottage.obj", L"assets/cottage.png");
-
-	// コテージ用Modelオブジェクト生成
-	gpCottage = new GameObject();
-	Model* pCottageModel = gpCottage->GetModel();
-	pCottageModel->SetModelData(gModelManager["cottage"]); // 3Dデータをセットする
-	pCottageModel->SetScale(0.0005f);
-	pCottageModel->mPos.z = 2.0f;
-	pCottageModel->mCamera = gpCamera;
+		"assets/cottage.obj",
+		L"assets/cottage.png");
 
 	// 銃モデル読み込み
 	ObjModelLoader loader2;
 	gModelManager["gun"] = loader2.Load(
 		"assets/gun.obj", L"assets/gun.png");
-
-	// 銃用Modelオブジェクト生成
-	gpGun = new GameObject();
-	Model* pGunModel = gpGun->GetModel();
-	pGunModel->SetModelData(gModelManager["gun"]);
-	pGunModel->SetScale(1.5f);
-	pGunModel->mPos.z = 1.0f;
-	pGunModel->mRotate.y = 90.0f;
-	pGunModel->mCamera = gpCamera;
 
 	// 地面モデル読み込み
 	ObjModelLoader loader3;
@@ -224,38 +267,63 @@ void Game_Init()
 		"assets/ground1.obj", L"assets/ground1.jpg"
 	);
 
-	// 地面生成
-	// 2重Forループで生成
-	for (int i = 0; i < MAX_GROUND; i++){
-		for (int j = 0; j < MAX_GROUND; j++){
-			gpGround[i][j] = new GameObject();
-			Model* pGroundModel = gpGround[i][j]->GetModel();
-			pGroundModel->SetModelData(gModelManager["ground1"]);
-			pGroundModel->SetScale(1.0f);
-			pGroundModel->mPos.x = -10.0f + 2.0f * i;
-			pGroundModel->mPos.z = -10.0f + 2.0f * j;
-			pGroundModel->mPos.y = -1.0f;
-			pGroundModel->mCamera = gpCamera;
-		}
-	}
-
-	// ソードモデル読み込み
+	// 弾（ビルボード）用モデル読み込み
 	ObjModelLoader loader4;
-	gModelManager["Sword"] = loader4.Load(
-		"assets/sword.obj", L"assets/sword.png"
+	gModelManager["shot"] = loader4.Load(
+		"assets/billboard.obj", L"assets/shot.png"
 	);
 
-	// ソードモデル生成
-	gpSword = new GameObject();
-	Model* pSwordModel = gpSword->GetModel();
-	pSwordModel->SetModelData(gModelManager["Sword"]);
-	pSwordModel->SetScale(0.03f);
-	pSwordModel->mPos.z = 1.0f;
-	pSwordModel->mRotate.y = 90.0f;
-	pSwordModel->mCamera = gpCamera;
+	// 2Dキャラモデル作成
+	gModelManager["2Dchar"] =
+	CreateSquarePolygon(1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
 
-	// ローダーに移行
+	// gObjectManager
+	// コテージ用Modelオブジェクト生成
+	//gObjectManager["cottage"] = new NormalObject();
+	//Model* pModel = gObjectManager["cottage"]->GetModel();
+	//pModel->SetModelData(gModelManager["cottage"]); // 3Dデータをセット
+	//pModel->SetScale(0.001f);
+	//pModel->mPos.z = 4.0f;
+	//pModel->mPos.y = 0.0f;
+	//pModel->mCamera = gpCamera;
 
+	// 銃用Modelオブジェクト生成
+	gObjectManager["gun"] = new NormalObject();
+	Model* pModel = gObjectManager["gun"]->GetModel();
+	pModel->SetModelData(gModelManager["gun"]);
+	pModel->SetScale(1.5f);
+	pModel->mPos.z = 0.0f;
+	pModel->mPos.y = 0.3f;
+	pModel->mPos.x = 0.0f;
+	pModel->mRotate.y = 0.0f;
+	pModel->mCamera = gpCamera;
+
+	// 2Dキャラオブジェクト生成
+	gObjectManager["2Dchar"] = new BillboardObject();
+	pModel = gObjectManager["2Dchar"]->GetModel();
+	pModel->SetModelData(gModelManager["2Dchar"]);
+	pModel->SetScale(1.0f);
+	pModel->mPos.x = -10.0f;
+	pModel->mPos.y = 1.0f;
+	pModel->mPos.z = 0.8f;
+	pModel->mCamera = gpCamera;
+
+
+	// 地面を生成
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		gpGround1[i] = new NormalObject();
+		Model* pGroundModel = gpGround1[i]->GetModel();
+		pGroundModel->SetModelData(gModelManager["ground1"]);
+		pGroundModel->SetScale(1.0f);
+		pGroundModel->mPos.x = 0.0f - 2.0f * i;
+		pGroundModel->mPos.z = 0.0f;
+		pGroundModel->mPos.y = -1.0f;
+		pGroundModel->mCamera = gpCamera;
+	}
+
+	// 追従カメラが追従する対象を設定
+	((BackCamera*)gpCamera)->SetTarget(gObjectManager["gun"]);
 }
 
 
@@ -279,185 +347,115 @@ void Game_Draw()
 		0);				// ステンシルバッファを0でクリアする
 
 	// ↓　自前の描画処理をここに書く *******
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		gpGround1[i]->Draw();
+	}
 
 	// ゲームオブジェクトを描画
-	gpCottage->Draw();
-	gpSword->Draw();
+	for (auto i = gObjectManager.begin();
+		i != gObjectManager.end();
+		i++)
+		i->second->Draw();
 
-	for (int i = 0; i < MAX_GROUND; i++){
-		for (int j = 0; j < MAX_GROUND; j++) {
-			gpGround[i][j]->Draw();
-		}
-	}
+	// 弾管理配列の中身をすべて描画する
+	for (int i = 0; i < gShotManager.size(); i++)
+		gShotManager[i]->Draw();
 
 	// ダブルバッファの切り替え
 	d3d->swapChain->Present(0, 0);
-
 }
 
 void Game_Update()
 {
 	// デルタタイムが想定外の値になった場合の処理
-	if (gDeltaTime >= 100){
+	if (gDeltaTime >= 100)
+	{
 		gDeltaTime = 0;
 	}
-	if (gDeltaTime <= 0){
+	if (gDeltaTime <= 0)
+	{
 		gDeltaTime = 1;
 	}
 
-	// カメラ移動変数
-	static float angle = 0.0f; // 回転角度
-	static float zoom = 3.0f;  // ズーム
-
-	// ①カメラの位置をキー操作で移動する
-	if (Input_GetKeyDown(VK_RIGHT))
-	{
-		angle += 0.04f * gDeltaTime;
-	}
-	if (Input_GetKeyDown(VK_LEFT))
-	{
-		angle -= 0.04f * gDeltaTime;
-	}
-
-	// ズーム操作
-	if (Input_GetKeyDown(VK_UP))
-		zoom -= 0.01f * gDeltaTime;
-	if (Input_GetKeyDown(VK_DOWN))
-		zoom += 0.01f * gDeltaTime;
-
-	// ②カメラの注視点を中心にカメラを回転する
-
-	// カメラ位置X　＝　sinf(角度ラジアン)
-	// カメラ位置Z　＝　cosf(角度ラジアン)
-	// 原点を中心に半径1.0fの円周上の点を求める
-	Model* pCottageModel = gpCottage->GetModel();
-	float radian = XMConvertToRadians(angle);
-	gpCamera->mEye.x =
-		sinf(radian) * zoom + pCottageModel->mPos.x;
-	gpCamera->mEye.z =
-		cosf(radian) * zoom + pCottageModel->mPos.z;
-	gpCamera->mEye.y = 2.0f;
-
-	// カメラ注視点をコテージの位置にする
-	gpCamera->SetFocus(pCottageModel->mPos);
-
 	// キャラクター移動
-	// キャラクターが向いている方向に前進する
-	// 向き変更＝ADキー　前進＝Wキー
-	// 「前向きベクトル」を計算する
-	// 移動速度＝Wキーで決まる
-	
-	//gpGun->mSpeed = 0.0f;
-	//if (Input_GetKeyDown('W'))
-	//	gpGun->mSpeed = 0.001f;
-	//if (Input_GetKeyDown('S'))
-	//	gpGun->mSpeed = -0.001f;
+	// →　キャラクターが向いている方向に進ませるには？
+	// 　→　無段階で移動できる
+	// 　→　「前向きベクトル」を使う
+	gObjectManager["gun"]->mSpeed = 0.0f;
 
-	gpSword->mSpeed = 0.0f;
-	if (Input_GetKeyDown('W'))
-		gpSword->mSpeed = 0.001f;
-	if (Input_GetKeyDown('S'))
-		gpSword->mSpeed = -0.001f;
+	// 銃の前進
+		gObjectManager["gun"]->mSpeed = 0.001f;
 
-	// キャラクターの方向転換
-	//Model* pGunModel = gpGun->GetModel();
-	//if (Input_GetKeyDown('A'))
-	//	pGunModel->mRotate.y -= 0.04f * gDeltaTime;
-	//if (Input_GetKeyDown('D'))
-	//	pGunModel->mRotate.y += 0.04f * gDeltaTime;
+	// 銃の移動
+		Model* pModel = gObjectManager["gun"]->GetModel();
+		if (Input_GetKeyDown('W'))
+			pModel->mPos.y += 0.001f;
 
-	Model* pSwordModel = gpSword->GetModel();
-	if (Input_GetKeyDown('A'))
-		pSwordModel->mRotate.y -= 0.04 * gDeltaTime;
-	if (Input_GetKeyDown('D'))
-		pSwordModel->mRotate.y += 0.04 * gDeltaTime;
+		if (Input_GetKeyDown('S'))
+			pModel->mPos.y -= 0.001f;
 
-	gpCottage->Update();
-	/*gpGun->Update();*/
-	gpSword->Update();
+		if (Input_GetKeyDown('A'))
+			pModel->mPos.z -= 0.001f;
 
-	// カメラ追従処理
-	// 1.操作キャラの前向きベクトルを取ってくる
+		if (Input_GetKeyDown('D'))
+			pModel->mPos.z += 0.001f;
 
-	/*XMFLOAT3 forwardVec = gpGun->GetForwardVector();*/
-	XMFLOAT3 forwardVec = gpSword->GetForwardVector();
+	// ゲームオブジェクトを描画
+	for (auto i = gObjectManager.begin();
+		i != gObjectManager.end();
+		i++)
+		i->second->Update();
 
-	// 2.その前向きベクトルを反転して，
-	// 後ろ向きベクトルを作る
-	XMFLOAT3 backVec{};
-	backVec.x = -forwardVec.x;
-	backVec.z = -forwardVec.z;
-	backVec.y = -forwardVec.y;
+	// 弾管理配列の中身をすべて更新する
+	for (int i = 0; i < gShotManager.size(); i++)
+		gShotManager[i]->Update();
 
-	// 3.後ろ向きベクトルを使って，キャラの後ろにカメラの焦点を当てる
-	XMFLOAT3 camEye{};
-	/*camEye.x = pGunModel->mPos.x + backVec.x * 2.0f;
-	camEye.z = pGunModel->mPos.z + backVec.z * 2.0f;
-	camEye.y = pGunModel->mPos.y + backVec.y * 2.0f + 1.0f;*/
 
-	camEye.x = pSwordModel->mPos.x + backVec.x * 2.0f;
-	camEye.z = pSwordModel->mPos.z + backVec.z * 2.0f;
-	camEye.y = pSwordModel->mPos.y + backVec.y * 2.0f + 1.0f;
+	// カメラの更新処理（ビュー変換行列計算）
 
-	// 緩やかカメラを作る
-	// 1フレーム前のカメラ1を保存する変数
-	static XMFLOAT3 lastCamEye;
-	float blendFactor = 0.995f;
-	camEye.x = lastCamEye.x * blendFactor
-		+ camEye.x * (1.0f - blendFactor);
-	camEye.y = lastCamEye.y * blendFactor
-		+ camEye.y * (1.0f - blendFactor);
-	camEye.z= lastCamEye.z * blendFactor
-		+ camEye.z * (1.0f - blendFactor);
-	gpCamera->SetEye(camEye);
-	lastCamEye = camEye;
 
-	// カメラ注視点を設定
-	// 操作キャラの少し前を注視点にする
-	XMFLOAT3 camFocus{};
-	camFocus.x = pSwordModel->mPos.x + forwardVec.x;
-	camFocus.z = pSwordModel->mPos.z + forwardVec.z;
-	camFocus.y = pSwordModel->mPos.y + forwardVec.y;
+	gpCamera->Update();
 
-	gpCamera->SetFocus(camFocus);
-
-	for (int i = 0; i < MAX_GROUND; i++) {
-		for (int j = 0; j < MAX_GROUND; j++) {
-			gpGround[i][j]->Update();
-		}
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		gpGround1[i]->Update();
 	}
 }
 
 void Game_Release()
 {
-	delete gpGun;
-	delete gpCottage;
-	delete gpSword;
+	// 弾管理配列の中身をすべて削除する
+	
 
-	for (int i = 0; i < MAX_GROUND; i++) {
-		for (int j = 0; j < MAX_GROUND; j++) {
-			delete gpGround[i][j];
-		}
+	// 地面の要素をすべて削除する
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		gpGround1[i];
 	}
 
-	//モデルマネージャーが管理するモデルを全開放する
-	// 先頭のイテレータを返す
-	for (auto obj = gModelManager.begin();
-		// 最後のイテレータと一致する？？
-		obj != gModelManager.end();
-		obj++)
+	COM_SAFE_RELEASE(gpConstBuffer);
+
+	// モデルマネージャーが管理するモデルを全解放する
+	for (auto i = gModelManager.begin();// 一番前の要素の管理情報を返す
+		i != gModelManager.end();// 一番最後の管理情報を返す
+		i++)
 	{
-		// first → 添字
-		// second → 格納されている要素
-
-		COM_SAFE_RELEASE(obj->second.mSRV);
-		COM_SAFE_RELEASE(obj->second.mVertexBuffer);
-	};
-
+		// first … 添え字
+		// second … 格納されている要素そのもの
+		COM_SAFE_RELEASE(i->second.mSRV);
+		COM_SAFE_RELEASE(i->second.mVertexBuffer);
+	}
 	// 連想配列の要素を全削除
 	gModelManager.clear();
 
-	COM_SAFE_RELEASE(gpConstBuffer);
+	// オブジェクトマネージャーが管理するオブジェクトを全開放する
+	for (auto i = gObjectManager.begin();
+		i != gObjectManager.end();
+		i++)
+	{
+		delete i->second;
+	}
+	// 連想配列の要素を全削除
+	gObjectManager.clear();
 }
-
-
