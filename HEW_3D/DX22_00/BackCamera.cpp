@@ -13,7 +13,7 @@ void BackCamera::Update()
 	backVec.z = -forwardVec.z;
 	backVec.y = -forwardVec.y;
 	// ③後ろ向きベクトルを使って、キャラの後ろにカメラを置く
-	XMFLOAT3 camEye;
+	XMFLOAT3 camEye{};
 	Model* pTargetModel = mTarget->GetModel();
 	camEye.x = pTargetModel->mPos.x + backVec.x * 2.0f;
 	camEye.z = pTargetModel->mPos.z + backVec.z * 2.0f;

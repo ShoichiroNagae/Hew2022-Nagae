@@ -78,9 +78,6 @@ Camera* gpCamera;
 // デルタタイム用の変数
 DWORD gDeltaTime;
 
-
-
-
 // WinMain関数を作る
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine, int nCmdShow)
