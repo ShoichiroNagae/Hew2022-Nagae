@@ -16,6 +16,12 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{76513446-d110-4367-8b77-75696fe767b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3dObject">
+      <UniqueIdentifier>{9b91a2f6-8658-491f-b078-b0858420379e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2dObject">
+      <UniqueIdentifier>{4a27250b-cf0f-4334-b5fb-f90a12f52930}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct3D.cpp">
@@ -39,19 +45,10 @@
     <ClCompile Include="Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="BackCamera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="BillboardModel.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="NormalObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="BillboardObject.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="BaseScene.cpp">
@@ -68,6 +65,24 @@
     </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="NormalObject.cpp">
+      <Filter>3dObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>3dObject</Filter>
+    </ClCompile>
+    <ClCompile Include="BillboardObject.cpp">
+      <Filter>3dObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TwoDimObject.cpp">
+      <Filter>2dObject</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticObject.cpp">
+      <Filter>2dObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,19 +104,10 @@
     <ClInclude Include="Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="BackCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="BillboardModel.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="NormalObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="BillboardObject.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="CreateSquarePolygon.h">
@@ -124,6 +130,24 @@
     </ClInclude>
     <ClInclude Include="winmain.h">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="BillboardObject.h">
+      <Filter>3dObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>3dObject</Filter>
+    </ClInclude>
+    <ClInclude Include="NormalObject.h">
+      <Filter>3dObject</Filter>
+    </ClInclude>
+    <ClInclude Include="TwoDimObject.h">
+      <Filter>2dObject</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticObject.h">
+      <Filter>2dObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

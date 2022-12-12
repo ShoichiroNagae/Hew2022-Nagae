@@ -3,12 +3,9 @@
 #include "Model.h"
 
 // ビルボード機能ありのモデル
-class BillboardModel :
-	public Model
+class BillboardModel : public Model
 {
-
 public:
-	void Draw() override;
-
+	void Draw() override; 
 };
 

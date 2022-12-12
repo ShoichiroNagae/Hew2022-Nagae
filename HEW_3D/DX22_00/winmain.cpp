@@ -73,7 +73,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	Initialize(hInstance,nCmdShow);
 
 	SceneManager* sceneManager = new SceneManager();
-	sceneManager->ChangeScene(SceneManager::GAME);
+	sceneManager->ChangeScene(SceneManager::TITLE);
 
 	MSG msg;
 	// ƒƒCƒ“ƒ‹[ƒv

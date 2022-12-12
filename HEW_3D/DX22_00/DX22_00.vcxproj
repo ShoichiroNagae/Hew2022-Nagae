@@ -157,7 +157,10 @@
     <ClCompile Include="ObjModelLoader.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="StaticObject.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="TwoDimObject.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
@@ -178,7 +181,10 @@
     <ClInclude Include="ObjModelLoader.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="StaticObject.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="TwoDimObject.h" />
     <ClInclude Include="winmain.h" />
   </ItemGroup>
   <ItemGroup>
