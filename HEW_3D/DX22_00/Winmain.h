@@ -48,12 +48,20 @@ GameObject* gpGround[MAX_GROUND][MAX_GROUND];
 
 std::map<std::string, ModelData> gModelManager;
 
-// 平面モデル用関数
-ModelData CreateSquarePolygon(float width, float height, float uvWidth, float uvHeight, const wchar_t* texFile);
-
 
 // Cameraクラスの変数
 Camera* gpCamera;
 
 // デルタタイム用の変数
 DWORD gDeltaTime;
+
+//// テクスチャ配列(動作が重くなった為未実装)
+ float animTime = 0.000f;
+ int animFlame = 0;
+//#define AN_DEFOMAX 3
+ const wchar_t* animDefo[] =
+ { 
+	 L"assets/cottage.png",
+	 L"assets/ground1.png",
+	 L"assets/sword.png"
+ };

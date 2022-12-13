@@ -1,3 +1,2 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: 中間ディレクトリ (x64\Debug\) に別のプロジェクト (DX22_00.vcxproj) と共有されているファイルが含まれています。これにより、クリーンしてリビルド動作が適切に行われない可能性があります。
-  winmain.cpp
   DX22_00.vcxproj -> C:\Users\トモヤ\Desktop\HAL\02_HAL\GM\HEW\Hew2022-Nagae\HEW_3D\x64\Debug\HEW_3D.exe

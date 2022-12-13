@@ -4,14 +4,6 @@ using namespace DirectX;
 
 DirectX::XMMATRIX Camera::GetViewMatrix()
 {
-	//// XMFLOAT3¨XMVECTOR‚Ö•ÏŠ·
-	//XMVECTOR eye = XMLoadFloat3(&mEye);
-	//XMVECTOR focus = XMLoadFloat3(&mFocus);
-	//XMVECTOR up = XMLoadFloat3(&mUp);
-	//// ƒrƒ…[•ÏŠ·s—ñì¬
-	//XMMATRIX mxView = XMMatrixLookAtLH(
-	//	eye, focus, up);
-
 	return mViewMatrix;
 }
 

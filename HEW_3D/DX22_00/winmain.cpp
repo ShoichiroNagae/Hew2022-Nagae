@@ -242,12 +242,12 @@ void Game_Init()
 		}
 	}
 
-	// プレイヤーモデル(ビルボード)読み込み
+	// プレイヤーモデル(平面データ)読み込み
 	loader = ObjModelLoader();
 	gModelManager["Player"] = loader.Load(
-		1.0f, 1.2f, 0.33f, 0.25f, L"assets/sword.png"
-	);
-	// プレイヤーモデル(ビルボード)生成
+		1.0f, 1.2f, 0.33f, 0.25f, animDefo[2]);
+
+	// プレイヤーモデル(平面データ)生成
 	gpPlayer = new BillboardObject();
 	Model* pPlayerModel = gpPlayer->GetModel();
 	pPlayerModel->SetModelData(gModelManager["Player"]);
@@ -399,7 +399,7 @@ void Game_Update()
 
 	Model* pSwordModel = gpSword->GetModel();
 	Model* pPlayerModel = gpPlayer->GetModel();
-	if (Input_GetKeyDown('A')){
+	if (Input_GetKeyDown('A')) {
 		pPlayerModel->mRotate.y -= 0.04f * gDeltaTime;
 		pSwordModel->mRotate.y = pPlayerModel->mRotate.y;
 	}
@@ -407,14 +407,29 @@ void Game_Update()
 		pPlayerModel->mRotate.y += 0.04f * gDeltaTime;
 		pSwordModel->mRotate.y = pPlayerModel->mRotate.y;
 	}
-// ********** 当たり判定 ************
-	// pSwordModel to 敵ModelmScaleの関数で判定を取る
-	// 
-// **********************************
+	// ********** 当たり判定 ************
+		// pSwordModel to 敵ModelmScaleの関数で判定を取る
+		// 
+	// **********************************
 
-// ***** テクスチャ書き換え（仮） **************
-	if (Input_GetKeyDown(VK_SPACE))
-		pPlayerModel->ChangeTexData(L"assets/ground1.jpg");
+	// ***** テクスチャ書き換え（仮） **************
+		// 時間変更(重い)
+	
+	if ((int)animTime != animFlame) {
+		if (animTime >= 3.0f) {
+			animTime = 0.0f;
+		}
+		animFlame = (int)animTime;
+		pPlayerModel->ChangeTexData(animDefo[(int)animFlame]);
+	}
+	animTime += 0.004f * gDeltaTime;
+		// 配列型未実装
+		//pPlayerModel->ChangeTexData((int)animDefo[animTime]);
+	
+	
+	// 条件変更
+	//if (Input_GetKeyDown(VK_SPACE))
+	//	pPlayerModel->ChangeTexData(L"assets/ground1.jpg");
 	
 // **********************************
 
