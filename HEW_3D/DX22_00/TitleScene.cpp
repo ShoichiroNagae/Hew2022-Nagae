@@ -4,6 +4,9 @@
 #include "SceneManager.h"
 #include "WICTextureLoader.h"
 
+// タイトルロゴ，スペースキーの読み込みは出来ているが，
+// 表示が出来ていない
+
 TitleScene::TitleScene()
 {
 	d3d = Direct3D_Get();

@@ -25,6 +25,7 @@ void GameScene::Init()
 
 	// カメラ作成
 	gpCamera = new BackCamera();
+
 	// カメラ初期値
 	// eyeとfocusが同じ座標だとダメ
 	gpCamera->SetEye(DirectX::XMFLOAT3(0.0f, 0.0f, -2.0f));
@@ -55,19 +56,19 @@ void GameScene::Init()
 		"assets/billboard.obj", L"assets/shot.png"
 	);
 
-	// 2Dキャラモデル作成
-	/*gModelManager["2Dchar"] =
-		CreateSquarePolygon(1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");*/
+	//// 2Dキャラモデル作成
+	//gModelManager["2Dchar"] =
+	//	CreateSquarePolygon(1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
 
-		// gObjectManager
-		// コテージ用Modelオブジェクト生成
-		//gObjectManager["cottage"] = new NormalObject();
-		//Model* pModel = gObjectManager["cottage"]->GetModel();
-		//pModel->SetModelData(gModelManager["cottage"]); // 3Dデータをセット
-		//pModel->SetScale(0.001f);
-		//pModel->mPos.z = 4.0f;
-		//pModel->mPos.y = 0.0f;
-		//pModel->mCamera = gpCamera;
+	//	 gObjectManager
+	//	// コテージ用Modelオブジェクト生成
+	//	gObjectManager["cottage"] = new NormalObject();
+	//	Model* pModel = gObjectManager["cottage"]->GetModel();
+	//	pModel->SetModelData(gModelManager["cottage"]); // 3Dデータをセット
+	//	pModel->SetScale(0.001f);
+	//	pModel->mPos.z = 4.0f;
+	//	pModel->mPos.y = 0.0f;
+	//	pModel->mCamera = gpCamera;
 
 		// 銃用Modelオブジェクト生成
 	gObjManager["gun"] = new NormalObject();
@@ -75,10 +76,22 @@ void GameScene::Init()
 	pModel->SetModelData(gModelManager["gun"]);
 	pModel->SetScale(1.5f);
 	pModel->mPos.z = 0.0f;
-	pModel->mPos.y = 0.3f;
+	pModel->mPos.y = 0.8f;
 	pModel->mPos.x = 0.0f;
 	pModel->mRotate.y = 0.0f;
 	pModel->mCamera = gpCamera;
+
+	// コテージモデルオブジェクト生成
+	gObjManager["cottage"] = new NormalObject();
+	pModel = gObjManager["cottage"]->GetModel();
+	pModel->SetModelData(gModelManager["cottage"]);
+	pModel->SetScale(1.5f);
+	pModel->mPos.z = 0.0f;
+	pModel->mPos.y = 0.8f;
+	pModel->mPos.z = 0.0f;
+	pModel->mRotate.y = 0.0f;
+	pModel->mCamera = gpCamera;
+
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["2Dchar"] = new BillboardObject();
@@ -138,8 +151,11 @@ void GameScene::Update()
 	// 銃の前進
 	gObjManager["gun"]->mSpeed = 0.001f;
 
+	// アニメーション切り替わりテスト
+	// gObjManagerから別のobjectに切り替える
 	// 銃の移動
 	Model* pModel = gObjManager["gun"]->GetModel();
+
 	if (Input_GetKeyDown('W'))
 		pModel->mPos.y += 0.001f;
 
@@ -151,6 +167,12 @@ void GameScene::Update()
 
 	if (Input_GetKeyDown('D'))
 		pModel->mPos.z += 0.001f;
+
+	if (Input_GetKeyDown('R'))
+		pModel->mPos.x -= 0.001f;
+
+	if (Input_GetKeyDown('F'))
+		pModel->mPos.x += 0.001f;
 
 	// ゲームオブジェクトを描画
 	for (auto i = gObjManager.begin();
@@ -164,8 +186,6 @@ void GameScene::Update()
 
 
 	// カメラの更新処理（ビュー変換行列計算）
-
-
 	gpCamera->Update();
 
 	for (int i = 0; i < MAX_GROUND; i++)
@@ -175,7 +195,8 @@ void GameScene::Update()
 }
 
 void GameScene::Draw()
-{// DIRECT3D構造体にアクセスする
+{
+	// DIRECT3D構造体にアクセスする
 	DIRECT3D* d3d = Direct3D_Get();
 
 	// 画面クリア（指定色で塗りつぶし）

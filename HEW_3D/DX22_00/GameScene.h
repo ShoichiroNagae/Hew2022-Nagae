@@ -24,8 +24,10 @@ protected:
 
 private:
 	Camera* gpCamera; // カメラ
+
 	// モデルマネージャー
-	std::map<std::string, ModelData> gModelManager;
+	// 名前で格納する 呼び出すときはstring型
+	std::map <std::string, ModelData> gModelManager;
 	// オブジェクトマネージャー
 	std::map <std::string, GameObject*> gObjManager;
 	// 銃弾マネージャー
