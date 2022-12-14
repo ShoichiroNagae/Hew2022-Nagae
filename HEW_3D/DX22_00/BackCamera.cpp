@@ -17,7 +17,7 @@ void BackCamera::Update()
 	Model* pTargetModel = mTarget->GetModel();
 	camEye.x = pTargetModel->mPos.x + backVec.x * 2.0f;
 	camEye.z = pTargetModel->mPos.z + backVec.z * 2.0f;
-	camEye.y = pTargetModel->mPos.y + backVec.y * 2.0f + 0.1f;
+	camEye.y = pTargetModel->mPos.y + backVec.y * 2.0f + 0.4f;
 	// 緩やかカメラの処理
 	// 1フレーム前のカメラ位置を保存する変数
 	static XMFLOAT3 lastCamEye;

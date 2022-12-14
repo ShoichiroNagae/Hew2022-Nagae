@@ -23,7 +23,7 @@ public:
 	// メンバ変数を初期化
 	void Init(void);
 
-	// オブジェクトの座標をセット
+	// オブジェクトの中心座標をセット
 	void set_Position(XMFLOAT3 _mainPos, XMFLOAT3 _tergetPos);
 	// ターゲットの座標を変更
 	void set_TergetPos(XMFLOAT3 _tergetPos);

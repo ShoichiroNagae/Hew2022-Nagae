@@ -33,7 +33,7 @@ void GameObject::Update()
 	mForwardVector = forwardVector;
 
 	// 前向きベクトルと速度を使って前進する
-	mModel->mPos.x += forwardVector.x * mSpeed * gDeltaTime;
+	//mModel->mPos.x += forwardVector.x * mSpeed * gDeltaTime;
 	mModel->mPos.z += forwardVector.z * mSpeed * gDeltaTime;
 }
 

@@ -56,10 +56,7 @@ using namespace DirectX;
 
 #define MAX_GROUND  50
 // 横１０×縦１０の二次元配列
-GameObject* gpGround1[MAX_GROUND];
-GameObject* gpGround2[MAX_GROUND];
-GameObject* gpGround3[MAX_GROUND];
-GameObject* gpGround4[MAX_GROUND];
+GameObject* gpGround[MAX_GROUND];
 
 // 弾マネージャー
 std::vector<GameObject*> gShotManager;
@@ -294,7 +291,7 @@ void Game_Init()
 	pModel->mPos.z = 0.0f;
 	pModel->mPos.y = 0.3f;
 	pModel->mPos.x = 0.0f;
-	pModel->mRotate.y = 0.0f;
+	pModel->mRotate.y = 90.0f;
 	pModel->mCamera = gpCamera;
 
 	// 2Dキャラオブジェクト生成
@@ -302,21 +299,21 @@ void Game_Init()
 	pModel = gObjectManager["2Dchar"]->GetModel();
 	pModel->SetModelData(gModelManager["2Dchar"]);
 	pModel->SetScale(1.0f);
-	pModel->mPos.x = -10.0f;
+	pModel->mPos.x = 2.0f;
 	pModel->mPos.y = 1.0f;
-	pModel->mPos.z = 0.8f;
+	pModel->mPos.z = 10.0f;
 	pModel->mCamera = gpCamera;
 
 
 	// 地面を生成
 	for (int i = 0; i < MAX_GROUND; i++)
 	{
-		gpGround1[i] = new NormalObject();
-		Model* pGroundModel = gpGround1[i]->GetModel();
+		gpGround[i] = new NormalObject();
+		Model* pGroundModel = gpGround[i]->GetModel();
 		pGroundModel->SetModelData(gModelManager["ground1"]);
 		pGroundModel->SetScale(1.0f);
-		pGroundModel->mPos.x = 0.0f - 2.0f * i;
-		pGroundModel->mPos.z = 0.0f;
+		pGroundModel->mPos.x = 0.0f;
+		pGroundModel->mPos.z = 0.0f + 2.0f * i;
 		pGroundModel->mPos.y = -1.0f;
 		pGroundModel->mCamera = gpCamera;
 	}
@@ -352,7 +349,7 @@ void Game_Draw()
 	// ↓　自前の描画処理をここに書く *******
 	for (int i = 0; i < MAX_GROUND; i++)
 	{
-		gpGround1[i]->Draw();
+		gpGround[i]->Draw();
 	}
 
 	// ゲームオブジェクトを描画
@@ -381,39 +378,36 @@ void Game_Update()
 		gDeltaTime = 1;
 	}
 
-	// キャラクター移動
-	// →　キャラクターが向いている方向に進ませるには？
-	// 　→　無段階で移動できる
-	// 　→　「前向きベクトル」を使う
-	gObjectManager["gun"]->mSpeed = 0.0f;
 
 	// 銃の前進
-		gObjectManager["gun"]->mSpeed = 0.001f;
+	gObjectManager["gun"]->mSpeed = 0.001f;
 
 	// 銃の移動
-		Model* pModel = gObjectManager["gun"]->GetModel();
-		if (Input_GetKeyDown('W'))
-			pModel->mPos.y += 0.001f;
+	Model* pModel = gObjectManager["gun"]->GetModel();
+	if (Input_GetKeyDown('W'))
+		pModel->mPos.y += 0.001f;
 
-		if (Input_GetKeyDown('S'))
-			pModel->mPos.y -= 0.001f;
+	if (Input_GetKeyDown('S'))
+		pModel->mPos.y -= 0.001f;
 
-		if (Input_GetKeyDown('A'))
-			pModel->mPos.z -= 0.001f;
+	if (Input_GetKeyDown('A'))
+		pModel->mPos.z -= 0.001f;
 
-		if (Input_GetKeyDown('D'))
+	if (Input_GetKeyDown('D'))
 			pModel->mPos.z += 0.001f;
 
-	// ゲームオブジェクトを描画
+	// ゲームオブジェクトを更新
 	for (auto i = gObjectManager.begin();
 		i != gObjectManager.end();
 		i++)
 		i->second->Update();
 
+
 	// 弾管理配列の中身をすべて更新する
 	for (int i = 0; i < gShotManager.size(); i++)
 		gShotManager[i]->Update();
 
+#if 0
 	gpHit->set_Position(gObjectManager["gun"]->GetModel()->mPos, gObjectManager["2Dchar"]->GetModel()->mPos);
 	gpHit->set_Size(gObjectManager["gun"]->GetModel()->mScale.x, gObjectManager["2Dchar"]->GetModel()->mScale.x);
 
@@ -421,6 +415,9 @@ void Game_Update()
 	{
 		gObjectManager.erase("2Dchar");
 	}
+#endif // 0
+
+
 
 
 	// カメラの更新処理（ビュー変換行列計算）
@@ -428,7 +425,7 @@ void Game_Update()
 
 	for (int i = 0; i < MAX_GROUND; i++)
 	{
-		gpGround1[i]->Update();
+		gpGround[i]->Update();
 	}
 }
 
@@ -440,7 +437,7 @@ void Game_Release()
 	// 地面の要素をすべて削除する
 	for (int i = 0; i < MAX_GROUND; i++)
 	{
-		gpGround1[i];
+		gpGround[i];
 	}
 
 	COM_SAFE_RELEASE(gpConstBuffer);
