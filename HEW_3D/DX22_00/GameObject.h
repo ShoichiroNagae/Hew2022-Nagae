@@ -7,8 +7,7 @@
 // ・向いている方向に進む機能
 // ・前向きベクトルを返す機能
 class GameObject
-{
-
+{ 
 public:
 	GameObject();
 	~GameObject();
