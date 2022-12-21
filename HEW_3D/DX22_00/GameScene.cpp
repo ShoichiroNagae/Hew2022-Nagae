@@ -6,6 +6,8 @@
 #include "BillboardObject.h"
 #include "Input.h"
 
+#include "CreateSquarePolygon.h"
+
 extern ID3D11Buffer* gpConstBuffer; //定数バッファ
 
 void GameScene::Init()
@@ -34,8 +36,8 @@ void GameScene::Init()
 	gpCamera->SetUp(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// コテージモデル読み込み
-	ObjModelLoader loader;
-	gModelManager["cottage"] = loader.Load(
+	ObjModelLoader loader1;
+	gModelManager["cottage"] = loader1.Load(
 		"assets/cottage.obj",
 		L"assets/cottage.png");
 
@@ -46,7 +48,7 @@ void GameScene::Init()
 
 	// 地面モデル読み込み
 	ObjModelLoader loader3;
-	gModelManager["ground1"] = loader3.Load(
+	gModelManager["ground1"] = loader3.Load (
 		"assets/ground1.obj", L"assets/ground1.jpg"
 	);
 
@@ -57,22 +59,21 @@ void GameScene::Init()
 	);
 
 	//// 2Dキャラモデル作成
-	//gModelManager["2Dchar"] =
-	//	CreateSquarePolygon(1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+	gModelManager["2Dchar"] =
+		CreateSquarePolygon(1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
 
-	//	 gObjectManager
-	//	// コテージ用Modelオブジェクト生成
-	//	gObjectManager["cottage"] = new NormalObject();
-	//	Model* pModel = gObjectManager["cottage"]->GetModel();
-	//	pModel->SetModelData(gModelManager["cottage"]); // 3Dデータをセット
-	//	pModel->SetScale(0.001f);
-	//	pModel->mPos.z = 4.0f;
-	//	pModel->mPos.y = 0.0f;
-	//	pModel->mCamera = gpCamera;
+	// コテージ用Modelオブジェクト生成
+	gObjManager["cottage"] = new NormalObject();
+	Model* pModel = gObjManager["cottage"]->GetModel();
+	pModel->SetModelData(gModelManager["cottage"]); // 3Dデータをセット
+	pModel->SetScale(0.001f);
+	pModel->mPos.z = 4.0f;
+	pModel->mPos.y = 0.0f;
+	pModel->mCamera = gpCamera;
 
-		// 銃用Modelオブジェクト生成
+	// 銃用Modelオブジェクト生成
 	gObjManager["gun"] = new NormalObject();
-	Model* pModel = gObjManager["gun"]->GetModel();
+	pModel = gObjManager["gun"]->GetModel();
 	pModel->SetModelData(gModelManager["gun"]);
 	pModel->SetScale(1.5f);
 	pModel->mPos.z = 0.0f;
@@ -104,16 +105,17 @@ void GameScene::Init()
 	pModel->mCamera = gpCamera;
 
 	// 地面を生成
-	for (int i = 0; i < MAX_GROUND; i++)
-	{
-		gpGround1[i] = new NormalObject();
-		Model* pGroundModel = gpGround1[i]->GetModel();
-		pGroundModel->SetModelData(gModelManager["ground1"]);
-		pGroundModel->SetScale(1.0f);
-		pGroundModel->mPos.x = 0.0f - 2.0f * i;
-		pGroundModel->mPos.z = 0.0f;
-		pGroundModel->mPos.y = -1.0f;
-		pGroundModel->mCamera = gpCamera;
+	for (int i = 0; i < MAX_GROUND; i++){
+		for (int j = 0; j < MAX_GROUND; j++){
+			gpGround[i][j] = new NormalObject();
+			Model* pGroundModel = gpGround[i][j]->GetModel();
+			pGroundModel->SetModelData(gModelManager["ground1"]);
+			pGroundModel->SetScale(1.0f);
+			pGroundModel->mPos.x = -10.0f + 2.0f * j;
+			pGroundModel->mPos.z = -10.0f + 2.0f * i;
+			pGroundModel->mPos.y = -1.0f;
+			pGroundModel->mCamera = gpCamera;
+		}
 	}
 
 	// 追従カメラが追従する対象を設定
@@ -137,6 +139,7 @@ void GameScene::Update()
 	{
 		gDeltaTime = 0;
 	}
+	
 	if (gDeltaTime <= 0)
 	{
 		gDeltaTime = 1;
@@ -154,7 +157,7 @@ void GameScene::Update()
 	// アニメーション切り替わりテスト
 	// gObjManagerから別のobjectに切り替える
 	// 銃の移動
-	Model* pModel = gObjManager["gun"]->GetModel();
+	Model* pModel = gObjManager["2Dchar"]->GetModel();
 
 	if (Input_GetKeyDown('W'))
 		pModel->mPos.y += 0.001f;
@@ -184,14 +187,15 @@ void GameScene::Update()
 	for (int i = 0; i < gShotManager.size(); i++)
 		gShotManager[i]->Update();
 
+	// 地面を全て更新
+	for (int i = 0; i < MAX_GROUND; i++){
+		for (int j = 0; j < MAX_GROUND; j++){
+			gpGround[i][j]->Update();
+		}
+	}
 
 	// カメラの更新処理（ビュー変換行列計算）
 	gpCamera->Update();
-
-	for (int i = 0; i < MAX_GROUND; i++)
-	{
-		gpGround1[i]->Update();
-	}
 }
 
 void GameScene::Draw()
@@ -213,9 +217,10 @@ void GameScene::Draw()
 		0);				// ステンシルバッファを0でクリアする
 
 	// ↓　自前の描画処理をここに書く *******
-	for (int i = 0; i < MAX_GROUND; i++)
-	{
-		gpGround1[i]->Draw();
+	for (int i = 0; i < MAX_GROUND; i++){
+		for (int j = 0; j < MAX_GROUND; j++){
+			gpGround[i][j]->Draw();
+		}
 	}
 
 	// ゲームオブジェクトを描画
@@ -238,9 +243,10 @@ void GameScene::Release()
 
 
 	// 地面の要素をすべて削除する
-	for (int i = 0; i < MAX_GROUND; i++)
-	{
-		gpGround1[i];
+	for (int i = 0; i < MAX_GROUND; i++){
+		for (int j = 0; j < MAX_GROUND; j++){
+			delete gpGround[i][j];
+		}
 	}
 
 	COM_SAFE_RELEASE(gpConstBuffer);
@@ -255,6 +261,7 @@ void GameScene::Release()
 		COM_SAFE_RELEASE(i->second.mSRV);
 		COM_SAFE_RELEASE(i->second.mVertexBuffer);
 	}
+
 	// 連想配列の要素を全削除
 	gModelManager.clear();
 

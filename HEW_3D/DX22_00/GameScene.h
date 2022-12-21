@@ -4,9 +4,10 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "ObjModelLoader.h"
 
 // マクロ定義
-constexpr auto MAX_GROUND = (50);
+constexpr auto MAX_GROUND = (10);
 
 class GameScene : public BaseScene
 {
@@ -32,10 +33,11 @@ private:
 	std::map <std::string, GameObject*> gObjManager;
 	// 銃弾マネージャー
 	std::vector<GameObject*> gShotManager;
+
+	//ローダーマネージャー
+	std::vector<ObjModelLoader*> Loader;
+	
 	DWORD gDeltaTime;
 
-	GameObject* gpGround1[MAX_GROUND];
-	GameObject* gpGround2[MAX_GROUND];
-	GameObject* gpGround3[MAX_GROUND];
-	GameObject* gpGround4[MAX_GROUND];
+	GameObject* gpGround[MAX_GROUND][MAX_GROUND];
 };

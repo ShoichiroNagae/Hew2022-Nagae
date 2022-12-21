@@ -19,18 +19,12 @@
     <Filter Include="3dObject">
       <UniqueIdentifier>{9b91a2f6-8658-491f-b078-b0858420379e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="2dObject">
-      <UniqueIdentifier>{4a27250b-cf0f-4334-b5fb-f90a12f52930}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct3D.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Input.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="winmain.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="WICTextureLoader.cpp">
@@ -78,11 +72,8 @@
     <ClCompile Include="BillboardObject.cpp">
       <Filter>3dObject</Filter>
     </ClCompile>
-    <ClCompile Include="TwoDimObject.cpp">
-      <Filter>2dObject</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticObject.cpp">
-      <Filter>2dObject</Filter>
+    <ClCompile Include="winmain.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -142,12 +133,6 @@
     </ClInclude>
     <ClInclude Include="NormalObject.h">
       <Filter>3dObject</Filter>
-    </ClInclude>
-    <ClInclude Include="TwoDimObject.h">
-      <Filter>2dObject</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticObject.h">
-      <Filter>2dObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

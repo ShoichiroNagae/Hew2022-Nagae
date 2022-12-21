@@ -1,20 +1,7 @@
 #undef UNICODE  // Unicodeではなく、マルチバイト文字を使う
 
 #include <Windows.h>
-#include "Direct3d.h"
 #include "input.h"
-#include <DirectXMath.h>
-#include "WICTextureLoader.h"
-#include "ObjModelLoader.h"
-#include "Model.h"
-#include "BackCamera.h"
-#include "GameObject.h"
-#include "NormalObject.h"
-#include "BillboardObject.h"
-#include "CreateSquarePolygon.h"
-#include <map>  // 連想配列
-#include <vector>
-#include <xstring>
 #include "winmain.h"
 
 #include "SceneManager.h"
@@ -73,7 +60,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	Initialize(hInstance,nCmdShow);
 
 	SceneManager* sceneManager = new SceneManager();
-	sceneManager->ChangeScene(SceneManager::TITLE);
+	sceneManager->ChangeScene(SceneManager::GAME);
 
 	MSG msg;
 	// メインループ
