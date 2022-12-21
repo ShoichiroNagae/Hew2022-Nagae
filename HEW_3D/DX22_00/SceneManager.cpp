@@ -19,7 +19,7 @@ void SceneManager::ChangeScene(SCENE scene) {
     case SCENE::TITLE:
         m_pScene = new TitleScene();      //タイトルシーンを現在のシーンにする
         break;
-    case SCENE::GAME:
+    case SCENE::GAME_1:
         m_pScene = new GameScene();       //ゲームシーンを現在のシーンにする
         break;
     case SCENE::RESULT:

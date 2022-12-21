@@ -26,7 +26,7 @@ TitleScene::TitleScene()
 	gpSpaceKey = new StaticObject();
 	gpSpaceKey->mSprite->SetTexture(gpTextureSpaceKey);
 	gpSpaceKey->SetPosition(0.0f, -0.3f);
-	gpSpaceKey->SetSize(10.0f, 10.0f);
+		gpSpaceKey->SetSize(10.0f, 10.0f);
 
 }
 
@@ -39,6 +39,11 @@ TitleScene::~TitleScene()
 	COM_SAFE_RELEASE(gpTextureTitle);
 }
 
+#define StageKindNum 2  //ステージの種類数
+
+//選択中のステージを格納する変数 0 1 2
+int ActiveStageCommand = 0;
+
 void TitleScene::Update()
 {
 	d3d = Direct3D_Get();
@@ -46,11 +51,62 @@ void TitleScene::Update()
 	gpTitleLogo->Update();
 	gpSpaceKey->Update();
 
+	//ゲームループ
+
+		//タイトルシーン
+
+		//下ボタンを押したら
+	if (Input_GetKeyTrigger(VK_DOWN))
+	{
+		//コマンドを一つずらす（増やす）
+		ActiveStageCommand++;
+
+		//もし一番下まで行ったら
+		if (ActiveStageCommand > StageKindNum)
+		{
+			//一番上（最初の行）に戻す
+			ActiveStageCommand = 0;
+		}
+
+		//色を変更する処理
+	}
+	//上ボタンを押したら
+	else if (Input_GetKeyTrigger(VK_UP))
+	{
+		//コマンドを一つずらす（減らす）
+		ActiveStageCommand--;
+
+		//もし一番上まで行ったら
+		if (ActiveStageCommand < 0)
+		{
+			//最後尾に戻す
+			ActiveStageCommand = StageKindNum;
+		}
+
+		//色を変更する処理
+	}
+
+	//もしスペースキーをしたら
 	if (Input_GetKeyDown(VK_SPACE))
 	{
-		SceneManager::ChangeScene(SceneManager::GAME);
+
+		switch (ActiveStageCommand)
+		{
+		case 0:
+			SceneManager::ChangeScene(SceneManager::GAME_1);
+			break;
+		case 1:
+			SceneManager::ChangeScene(SceneManager::GAME_2);
+			break;
+		case 2:
+			SceneManager::ChangeScene(SceneManager::GAME_3);
+			break;
+		default:
+			break;
+		}
 	}
 }
+
 
 void TitleScene::Draw()
 {
