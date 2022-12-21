@@ -1,2 +1,7 @@
 ﻿  BackCamera.cpp
+  BillboardObject.cpp
+  GameObject.cpp
+  NormalObject.cpp
+  winmain.cpp
+  コードを生成中...
   DX22_00.vcxproj -> C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe

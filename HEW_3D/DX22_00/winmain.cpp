@@ -13,10 +13,10 @@
 #include "BillboardObject.h"
 #include "CreateSquarePolygon.h"
 #include "HitCheck_2D.h"
+#include "HitSphere.h"
 #include <map>  // 連想配列
 #include <vector>
 #include <xstring>
-
 
 #pragma comment (lib, "winmm.lib") // timeGetTime関数のため
 
@@ -73,9 +73,6 @@ Camera* gpCamera;
 
 // デルタタイム用の変数
 DWORD gDeltaTime;
-
-// 当たり判定用の変数
-HitCheck_2D* gpHit;
 
 // WinMain関数を作る
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -288,7 +285,7 @@ void Game_Init()
 	Model* pModel = gObjectManager["gun"]->GetModel();
 	pModel->SetModelData(gModelManager["gun"]);
 	pModel->SetScale(1.5f);
-	pModel->mPos.z = 0.0f;
+	pModel->mPos.z = -5.0f;
 	pModel->mPos.y = 0.3f;
 	pModel->mPos.x = 0.0f;
 	pModel->mRotate.y = 90.0f;
@@ -299,7 +296,7 @@ void Game_Init()
 	pModel = gObjectManager["2Dchar"]->GetModel();
 	pModel->SetModelData(gModelManager["2Dchar"]);
 	pModel->SetScale(1.0f);
-	pModel->mPos.x = 2.0f;
+	pModel->mPos.x = 0.0f;
 	pModel->mPos.y = 1.0f;
 	pModel->mPos.z = 10.0f;
 	pModel->mCamera = gpCamera;
@@ -320,10 +317,6 @@ void Game_Init()
 
 	// 追従カメラが追従する対象を設定
 	((BackCamera*)gpCamera)->SetTarget(gObjectManager["gun"]);
-
-	// 当たり判定
-	gpHit = new HitCheck_2D();
-	gpHit->Init();
 }
 
 
@@ -391,10 +384,19 @@ void Game_Update()
 		pModel->mPos.y -= 0.001f;
 
 	if (Input_GetKeyDown('A'))
-		pModel->mPos.z -= 0.001f;
+		pModel->mPos.x -= 0.001f;
 
 	if (Input_GetKeyDown('D'))
-			pModel->mPos.z += 0.001f;
+			pModel->mPos.x += 0.001f;
+
+	// 当たり判定を実行
+	HitSphere* pHitSphere = gObjectManager["gun"]->GetHit();		// "gun"の当たり判定情報をpHitSphereに代入
+	if (pHitSphere->IsHit(gObjectManager["2Dchar"]->GetHit()))		// pHitShhereと2Dcharの当たり判定を実行
+	{
+		pModel = gObjectManager["2Dchar"]->GetModel();				// 当たったら奥に移動する
+		pModel->mPos.z += 10.0f;
+	}
+
 
 	// ゲームオブジェクトを更新
 	for (auto i = gObjectManager.begin();
@@ -406,18 +408,6 @@ void Game_Update()
 	// 弾管理配列の中身をすべて更新する
 	for (int i = 0; i < gShotManager.size(); i++)
 		gShotManager[i]->Update();
-
-#if 0
-	gpHit->set_Position(gObjectManager["gun"]->GetModel()->mPos, gObjectManager["2Dchar"]->GetModel()->mPos);
-	gpHit->set_Size(gObjectManager["gun"]->GetModel()->mScale.x, gObjectManager["2Dchar"]->GetModel()->mScale.x);
-
-	if (gpHit->check_IsHit())
-	{
-		gObjectManager.erase("2Dchar");
-	}
-#endif // 0
-
-
 
 
 	// カメラの更新処理（ビュー変換行列計算）
