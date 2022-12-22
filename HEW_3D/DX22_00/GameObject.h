@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Model.h"
-#include "HitSphere.h"
-
 // 当たり判定の範囲　デフォルト
 #define HITBOX_DEFALT	(1.0f)
 
@@ -24,18 +22,12 @@ public:
 	// 前向きベクトルを返す関数
 	DirectX::XMFLOAT3 GetForwardVector();
 
-	// このクラスの当たり判定情報を返す関数
-	HitSphere* GetHit() { return this->mHit; }
-
 	// 移動速度
 	float mSpeed;
 
 protected:
 	// このクラスで表示させるモデル
 	Model* mModel;
-
-	// このクラスの当たり判定
-	HitSphere* mHit;
 
 private:
 	// 前向きベクトルを保存しておく変数

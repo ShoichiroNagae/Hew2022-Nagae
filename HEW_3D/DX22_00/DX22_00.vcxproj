@@ -149,6 +149,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Direct3D.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HitCheck.cpp" />
     <ClCompile Include="HitSphere.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="CreateSquarePolygon.h" />
     <ClInclude Include="Direct3D.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="HitCheck.h" />
     <ClInclude Include="HitSphere.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />

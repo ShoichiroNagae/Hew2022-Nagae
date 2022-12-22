@@ -12,7 +12,6 @@
 #include "NormalObject.h"
 #include "BillboardObject.h"
 #include "CreateSquarePolygon.h"
-#include "HitCheck_2D.h"
 #include "HitSphere.h"
 #include <map>  // 連想配列
 #include <vector>
@@ -73,6 +72,9 @@ Camera* gpCamera;
 
 // デルタタイム用の変数
 DWORD gDeltaTime;
+
+// 当たり判定
+HitCheck* gpHitCheck;
 
 // WinMain関数を作る
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -301,6 +303,9 @@ void Game_Init()
 	pModel->mPos.z = 10.0f;
 	pModel->mCamera = gpCamera;
 
+	// 当たり判定
+	gpHitCheck = new HitSphere();
+
 
 	// 地面を生成
 	for (int i = 0; i < MAX_GROUND; i++)
@@ -390,10 +395,14 @@ void Game_Update()
 			pModel->mPos.x += 0.001f;
 
 	// 当たり判定を実行
-	HitSphere* pHitSphere = gObjectManager["gun"]->GetHit();		// "gun"の当たり判定情報をpHitSphereに代入
-	if (pHitSphere->IsHit(gObjectManager["2Dchar"]->GetHit()))		// pHitShhereと2Dcharの当たり判定を実行
+	HITBOX gun = { 0 };
+	HITBOX niD = { 0 };
+	gun = gpHitCheck->make_HitBox(gObjectManager["gun"]->GetModel()->mPos, 1.0f, 0.0f, 0.0f, 0.0f);
+	niD = gpHitCheck->make_HitBox(gObjectManager["2Dchar"]->GetModel()->mPos, 1.0f, 0.0f, 0.0f, 0.0f);
+
+	if (gpHitCheck->IsHit(gun, niD))
 	{
-		pModel = gObjectManager["2Dchar"]->GetModel();				// 当たったら奥に移動する
+		pModel = gObjectManager["2Dchar"]->GetModel();
 		pModel->mPos.z += 10.0f;
 	}
 
