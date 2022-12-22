@@ -36,32 +36,10 @@ void GameScene::Init()
 	gpCamera->SetUp(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// コテージモデル読み込み
-	ObjModelLoader loader1;
-	gModelManager["cottage"] = loader1.Load(
+	ObjModelLoader loader;
+	gModelManager["cottage"] = loader.Load(
 		"assets/cottage.obj",
 		L"assets/cottage.png");
-
-	// 銃モデル読み込み
-	ObjModelLoader loader2;
-	gModelManager["gun"] = loader2.Load(
-		"assets/gun.obj", L"assets/gun.png");
-
-	// 地面モデル読み込み
-	ObjModelLoader loader3;
-	gModelManager["ground1"] = loader3.Load (
-		"assets/ground1.obj", L"assets/ground1.jpg"
-	);
-
-	// 弾（ビルボード）用モデル読み込み
-	ObjModelLoader loader4;
-	gModelManager["shot"] = loader4.Load(
-		"assets/billboard.obj", L"assets/shot.png"
-	);
-
-	//// 2Dキャラモデル作成
-	gModelManager["2Dchar"] =
-		CreateSquarePolygon(1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
-
 	// コテージ用Modelオブジェクト生成
 	gObjManager["cottage"] = new NormalObject();
 	Model* pModel = gObjManager["cottage"]->GetModel();
@@ -71,6 +49,10 @@ void GameScene::Init()
 	pModel->mPos.y = 0.0f;
 	pModel->mCamera = gpCamera;
 
+	// 銃モデル読み込み
+	loader = ObjModelLoader();
+	gModelManager["gun"] = loader.Load(
+		"assets/gun.obj", L"assets/gun.png");
 	// 銃用Modelオブジェクト生成
 	gObjManager["gun"] = new NormalObject();
 	pModel = gObjManager["gun"]->GetModel();
@@ -82,6 +64,11 @@ void GameScene::Init()
 	pModel->mRotate.y = 0.0f;
 	pModel->mCamera = gpCamera;
 
+	// 地面モデル読み込み
+	loader = ObjModelLoader();
+	gModelManager["ground1"] = loader.Load (
+		"assets/ground1.obj", L"assets/ground1.jpg"
+	);
 	// コテージモデルオブジェクト生成
 	gObjManager["cottage"] = new NormalObject();
 	pModel = gObjManager["cottage"]->GetModel();
@@ -92,8 +79,18 @@ void GameScene::Init()
 	pModel->mPos.z = 0.0f;
 	pModel->mRotate.y = 0.0f;
 	pModel->mCamera = gpCamera;
+	// 弾（ビルボード）用モデル読み込み
+	loader = ObjModelLoader();
+	gModelManager["shot"] = loader.Load(
+		"assets/billboard.obj", L"assets/shot.png"
+	);
 
-
+	//// 2Dキャラモデル読み込み
+	loader = ObjModelLoader();
+	gModelManager["2Dchar"] =loader.Load(
+		1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+	/*gModelManager["2Dchar"] =
+		CreateSquarePolygon(1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");*/
 	// 2Dキャラオブジェクト生成
 	gObjManager["2Dchar"] = new BillboardObject();
 	pModel = gObjManager["2Dchar"]->GetModel();
@@ -154,28 +151,35 @@ void GameScene::Update()
 	// 銃の前進
 	gObjManager["gun"]->mSpeed = 0.001f;
 
-	// アニメーション切り替わりテスト
-	// gObjManagerから別のobjectに切り替える
 	// 銃の移動
-	Model* pModel = gObjManager["2Dchar"]->GetModel();
-
+	Model* pGunModel = gObjManager["gun"]->GetModel();
 	if (Input_GetKeyDown('W'))
-		pModel->mPos.y += 0.001f;
+		pGunModel->mPos.y += 0.001f;
 
 	if (Input_GetKeyDown('S'))
-		pModel->mPos.y -= 0.001f;
+		pGunModel->mPos.y -= 0.001f;
 
 	if (Input_GetKeyDown('A'))
-		pModel->mPos.z -= 0.001f;
+		pGunModel->mPos.z -= 0.001f;
 
 	if (Input_GetKeyDown('D'))
-		pModel->mPos.z += 0.001f;
-
+		pGunModel->mPos.z += 0.001f;
+	// 加速・減速
 	if (Input_GetKeyDown('R'))
-		pModel->mPos.x -= 0.001f;
+		pGunModel->mPos.x -= 0.001f;
 
 	if (Input_GetKeyDown('F'))
-		pModel->mPos.x += 0.001f;
+		pGunModel->mPos.x += 0.001f;
+
+// ************************************************************* 
+	// アニメーション切り替わりテスト
+	// gObjManagerから別のobjectに切り替える
+	//// 条件変更
+	//BillboardModel* p2DcharModel = gObjManager["2Dchar"]->GetModel();
+
+	/*if (Input_GetKeyDown(VK_SPACE))
+		p2DcharModel->ChangeTexData(L"assets/ground1.jpg");*/
+// **************************************************************	
 
 	// ゲームオブジェクトを描画
 	for (auto i = gObjManager.begin();
