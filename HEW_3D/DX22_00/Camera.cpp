@@ -2,6 +2,8 @@
 
 using namespace DirectX;
 
+Camera* Camera::mMainCamera;
+
 void Camera::SetEye(DirectX::XMFLOAT3 newEye)
 {
 	mEye = newEye;
@@ -25,9 +27,9 @@ DirectX::XMMATRIX Camera::GetViewMatrix()
 void Camera::Update()
 {
 	// ビュー変換行列を計算
-	XMVECTOR eyePosition = XMLoadFloat3(&mEye);
-	XMVECTOR focusPosition = XMLoadFloat3(&mFocus);
-	XMVECTOR UpVector = XMLoadFloat3(&mUp);
+	XMVECTOR eye = XMLoadFloat3(&mEye);
+	XMVECTOR focus = XMLoadFloat3(&mFocus);
+	XMVECTOR Up = XMLoadFloat3(&mUp);
 	mViewMatrix = XMMatrixLookAtLH(
-		eyePosition, focusPosition, UpVector);
+		eye, focus, Up);
 }

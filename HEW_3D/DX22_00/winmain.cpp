@@ -58,7 +58,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 {
 	// ゲームの初期化
 	Initialize(hInstance,nCmdShow);
-
+	
+	// シーンマネージャー生成
 	SceneManager* sceneManager = new SceneManager();
 	sceneManager->ChangeScene(SceneManager::GAME);
 
