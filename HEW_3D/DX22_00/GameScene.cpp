@@ -5,6 +5,8 @@
 #include "NormalObject.h"
 #include "BillboardObject.h"
 #include "Input.h"
+#include "Camera.h"
+#include "Model.h"
 
 #include "CreateSquarePolygon.h"
 
@@ -27,6 +29,7 @@ void GameScene::Init()
 
 	// カメラ作成
 	gpCamera = new BackCamera();
+	Camera::mMainCamera = gpCamera;
 
 	// カメラ初期値
 	// eyeとfocusが同じ座標だとダメ

@@ -155,10 +155,12 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="NormalObject.cpp" />
     <ClCompile Include="ObjModelLoader.cpp" />
+    <ClCompile Include="myPolygon.cpp" />
     <ClCompile Include="ResultScene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="UnifyVec.cpp" />
     <ClCompile Include="WICTextureLoader.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
@@ -177,10 +179,12 @@
     <ClInclude Include="ModelData.h" />
     <ClInclude Include="NormalObject.h" />
     <ClInclude Include="ObjModelLoader.h" />
+    <ClInclude Include="myPolygon.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="UnifyVec.h" />
     <ClInclude Include="winmain.h" />
   </ItemGroup>
   <ItemGroup>
