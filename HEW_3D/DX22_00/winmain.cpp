@@ -13,6 +13,7 @@
 #include "BillboardObject.h"
 #include "CreateSquarePolygon.h"
 #include "HitSphere.h"
+#include "HitSquare.h"
 #include <map>  // 連想配列
 #include <vector>
 #include <xstring>
@@ -304,7 +305,7 @@ void Game_Init()
 	pModel->mCamera = gpCamera;
 
 	// 当たり判定
-	gpHitCheck = new HitSphere();
+	gpHitCheck = new HitSquare();
 
 
 	// 地面を生成
@@ -397,13 +398,27 @@ void Game_Update()
 	// 当たり判定を実行
 	HITBOX gun = { 0 };
 	HITBOX niD = { 0 };
-	gun = gpHitCheck->make_HitBox(gObjectManager["gun"]->GetModel()->mPos, 1.0f, 0.0f, 0.0f, 0.0f);
-	niD = gpHitCheck->make_HitBox(gObjectManager["2Dchar"]->GetModel()->mPos, 1.0f, 0.0f, 0.0f, 0.0f);
+	gun = gpHitCheck->make_HitBox(gObjectManager["gun"]->GetModel()->mPos, 0.5f, 0.5f, 0.5f, 0.5f);
+	niD = gpHitCheck->make_HitBox(gObjectManager["2Dchar"]->GetModel()->mPos, 0.5f, 0.5f, 0.5f, 0.5f);
 
 	if (gpHitCheck->IsHit(gun, niD))
 	{
 		pModel = gObjectManager["2Dchar"]->GetModel();
 		pModel->mPos.z += 10.0f;
+	}
+
+	/*当たり判定テスト用*/
+	/*２Dキャラの前後移動*/
+	if (Input_GetKeyTrigger(VK_UP))
+	{
+		pModel = gObjectManager["2Dchar"]->GetModel();
+		pModel->mPos.z += 10.0f;
+	}
+
+	if (Input_GetKeyTrigger(VK_DOWN))
+	{
+		pModel = gObjectManager["2Dchar"]->GetModel();
+		pModel->mPos.z -= 10.0f;
 	}
 
 

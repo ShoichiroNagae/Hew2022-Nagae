@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ソース ファイル\HitCheck">
+      <UniqueIdentifier>{345bdc7d-d778-40be-9479-0f776b594ebb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\HitCheck">
+      <UniqueIdentifier>{a3a55435-ae2c-44fb-bf08-4f74f22bd038}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Direct3D.cpp">
@@ -52,10 +58,13 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="HitSphere.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\HitCheck</Filter>
     </ClCompile>
     <ClCompile Include="HitCheck.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>ソース ファイル\HitCheck</Filter>
+    </ClCompile>
+    <ClCompile Include="HitSquare.cpp">
+      <Filter>ソース ファイル\HitCheck</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,11 +104,14 @@
     <ClInclude Include="CreateSquarePolygon.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="HitSphere.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="HitCheck.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>ヘッダー ファイル\HitCheck</Filter>
+    </ClInclude>
+    <ClInclude Include="HitSphere.h">
+      <Filter>ヘッダー ファイル\HitCheck</Filter>
+    </ClInclude>
+    <ClInclude Include="HitSquare.h">
+      <Filter>ヘッダー ファイル\HitCheck</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

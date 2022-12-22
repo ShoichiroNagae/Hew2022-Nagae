@@ -151,6 +151,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HitCheck.cpp" />
     <ClCompile Include="HitSphere.cpp" />
+    <ClCompile Include="HitSquare.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="NormalObject.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="HitCheck.h" />
     <ClInclude Include="HitSphere.h" />
+    <ClInclude Include="HitSquare.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelData.h" />

@@ -14,20 +14,22 @@ struct HITBOX
 	float centerY;
 	float centerZ;
 
-	// 半径
-	float radius;
-
-	// 正方形のサイズ
-	float size;
-
 	// 長方形用
-	float width;
-	float height;
+	float sizeX;	// 幅
+	float sizeY;	// 高さ
+	float sizeZ;	// 奥行き
+
+	// 円用
+	float radius;	// 半径
 };
 
 class HitCheck
 {
 public:
+	// コンストラクタ
+	HitCheck();
+	~HitCheck();
+
 	// 当たり判定を実行する関数
 	virtual bool IsHit(HITBOX obj_1, HITBOX obj_2) = 0;
 
@@ -35,9 +37,19 @@ public:
 	// 機能	：HITBOX構造体を作る
 	// 引数	：構造体にある情報
 	// 戻り値	：HITBOX構造体
-	HITBOX make_HitBox(DirectX::XMFLOAT3 obj_pos, float obj_radius, float obj_size, float obj_width, float obj_height);
+	// メモ	：丸と丸の判定をしたかったらradiusに値を入れる
+	// 　　	　四角と四角の判定をしたかったらwidthとheightに値を入れる
+	// 　　	　使わない値には0.0fを入れる
+	HITBOX make_HitBox(DirectX::XMFLOAT3 obj_pos, float obj_radius, float obj_sizeX, float obj_sizeY, float obj_sizeZ);
+
+	// show_HitBox
+	// 機能	：HITBOXの範囲を描画
+	// 引数	：なし
+	// 戻り値	：なし
+	void show_HitBox(void);
 
 private:
-
+	// ヒットボックス表示用
+	ID3D11ShaderResourceView* m_hitbox;
 };
 

@@ -2,11 +2,8 @@
 
 bool HitSphere::IsHit(HITBOX obj_1, HITBOX obj_2)
 {
-	// active‚ªfalse‚È‚ç“–‚½‚è”»’è‚ğ‘f’Ê‚è‚³‚¹‚é
-	if (obj_1.active == false || obj_2.active == false)
-	{
-		return false;
-	}
+	// active‚ªfalse‚È‚ç‘f’Ê‚è‚·‚é
+			/*ˆ—‘‚­*/
 
 	// “–‚½‚è”»’è‚ğŒvZ
 	float x = obj_2.centerX - obj_1.centerX;

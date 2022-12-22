@@ -5,7 +5,7 @@
 class HitSphere :public HitCheck
 {
 public:
-	// 引数で指定されたデータを比較する
+	// 円と円の当たり判定を実行する
 	bool IsHit(HITBOX obj_1, HITBOX obj_2)override;
 
 private:
