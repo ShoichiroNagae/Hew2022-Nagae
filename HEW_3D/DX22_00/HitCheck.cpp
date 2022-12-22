@@ -16,11 +16,11 @@ HITBOX HitCheck::make_HitBox(DirectX::XMFLOAT3 obj_pos, float obj_radius, float 
 	tmp.active = true;
 	tmp.centerX = obj_pos.x;
 	tmp.centerY = obj_pos.y;
-	tmp.centerZ = obj_pos.z;
-	tmp.sizeX = obj_sizeX;
-	tmp.sizeY = obj_sizeY;
-	tmp.sizeZ = obj_sizeZ;
-	tmp.radius = obj_radius;
+	tmp.centerZ	= obj_pos.z;
+	tmp.sizeX	= obj_sizeX;
+	tmp.sizeY	= obj_sizeY;
+	tmp.sizeZ	= obj_sizeZ;
+	tmp.radius	= obj_radius;
 
 	return tmp;
 }
