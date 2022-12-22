@@ -19,7 +19,7 @@ void SceneManager::ChangeScene(SCENE scene) {
     case SCENE::TITLE:
         m_pScene = new TitleScene();      //タイトルシーンを現在のシーンにする
         break;
-    case SCENE::GAME_1:
+    case SCENE::GAME:
         m_pScene = new GameScene();       //ゲームシーンを現在のシーンにする
         break;
     case SCENE::RESULT:
@@ -37,6 +37,4 @@ void SceneManager::Update() {
 
 void SceneManager::Draw() {
     m_pScene->Draw();           //現在のシーンの描画関数
-}
-
 }

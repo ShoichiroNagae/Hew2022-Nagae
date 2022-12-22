@@ -6,9 +6,7 @@ class SceneManager {
 public:
     enum SCENE {
         TITLE,
-        GAME_1,
-        GAME_2,
-        GAME_3,
+        GAME,
         RESULT
     };
 
@@ -18,4 +16,3 @@ public:
 private:
     static BaseScene* m_pScene;               //åªç›ÇÃÉVÅ[Éì
 };
-
