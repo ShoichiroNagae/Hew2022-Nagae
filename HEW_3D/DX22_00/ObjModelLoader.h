@@ -18,7 +18,8 @@ class ObjModelLoader
 public:
 	// OBJファイルとテクスチャを読み込んでModelDataとして返す
 	ModelData Load(const char* pObjFileName, const wchar_t* pTexFileName);
-
+	// 2Dモデルデータ用
+	ModelData Load(float width, float height, float uvWidth, float uvHeight, const wchar_t* pTexFileName);
 private:
 	void FinSkip();
 	void FinVertex();
