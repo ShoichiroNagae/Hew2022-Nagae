@@ -73,6 +73,11 @@ void Model::SetModelData(ModelData model)
 	mModelData = model;
 }
 
+void Model::ChangeTexData(const wchar_t* pTexFileName)
+{
+	Direct3D_LoadTexture(pTexFileName, &mModelData.mSRV);
+}
+
 void Model::SetScale(float newScale)
 {
 	mScale.x = newScale;
