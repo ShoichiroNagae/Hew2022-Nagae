@@ -3,11 +3,14 @@
 #include <Windows.h>
 #include "input.h"
 #include "winmain.h"
+#include "Model.h"
 
 #include "SceneManager.h"
 
 
 #pragma comment (lib, "winmm.lib") // timeGetTime関数のため
+
+extern ID3D11Buffer* gpConstBuffer;
 
 // ゲーム初期化関数
 void Initialize(_In_ HINSTANCE hInstance, _In_ int nCmdShow)
@@ -50,6 +53,19 @@ void Initialize(_In_ HINSTANCE hInstance, _In_ int nCmdShow)
 
 	// Direct3Dの初期化関数を呼び出す
 	Direct3D_Init(hWnd);
+
+	// 定数バッファ作成
+	// コンスタントバッファとして作成するための情報設定
+	D3D11_BUFFER_DESC contstat_buffer_desc;
+	contstat_buffer_desc.ByteWidth = 4 * 4 * 4 * 4;	// バッファのサイズ（4x4行列x4個）
+	contstat_buffer_desc.Usage = D3D11_USAGE_DYNAMIC;		// 使用方法
+	contstat_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;	// バッファの種類(コンスタントバッファ)
+	contstat_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUアクセス設定
+	contstat_buffer_desc.MiscFlags = 0;				// その他のオプション
+	contstat_buffer_desc.StructureByteStride = 0;			// 構造体サイズ(行列を使うが今回は0でも動作することを実証する)
+
+	Direct3D_Get()->device->CreateBuffer(&contstat_buffer_desc,
+		nullptr, &gpConstBuffer);
 }
 
 // WinMain関数を作る
@@ -61,7 +77,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	
 	// シーンマネージャー生成
 	SceneManager* sceneManager = new SceneManager();
-	sceneManager->ChangeScene(SceneManager::GAME);
+	sceneManager->ChangeScene(SceneManager::TITLE);
 
 	MSG msg;
 	// メインループ

@@ -24,6 +24,6 @@ private:
 	std::map <std::string, ModelData> gModelManager;
 	std::vector<GameObject*> gObjectList;
 
-
+	Camera* mCamera;
 };
 

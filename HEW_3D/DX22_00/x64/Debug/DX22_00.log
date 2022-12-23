@@ -1,2 +1,8 @@
-﻿  GameScene.cpp
-  DX22_00.vcxproj -> C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
+﻿  BaseScene.cpp
+  GameScene.cpp
+  ResultScene.cpp
+  SceneManager.cpp
+  TitleScene.cpp
+  winmain.cpp
+  コードを生成中...
+  DX22_00.vcxproj -> C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe

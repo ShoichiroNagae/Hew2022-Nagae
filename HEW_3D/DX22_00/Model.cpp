@@ -50,6 +50,9 @@ void Model::Draw()
 	HRESULT hr = d3d->context->Map(gpConstBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData);
 	if (SUCCEEDED(hr))
 	{
+		// Cameraからビュー変換行列を取得
+		XMMATRIX mxView = mCamera->GetViewMatrix();
+
 		// 1: コピーしたい先のアドレス
 		// 2: コピー先の確保されているデータサイズ
 		// 3: コピーしたいデータが入っている先頭アドレス
@@ -57,6 +60,7 @@ void Model::Draw()
 		const rsize_t dataSize = sizeof(cbdata);
 		memcpy_s(pData.pData, pData.RowPitch, &cbdata, dataSize);
 
+		/*★■ここで例外スロー発生する■★*/
 		d3d->context->Unmap(gpConstBuffer, 0);  // ロックしたメモリを解除する
 	}
 

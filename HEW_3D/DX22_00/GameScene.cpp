@@ -5,7 +5,6 @@
 #include "NormalObject.h"
 #include "BillboardObject.h"
 #include "Input.h"
-#include "Camera.h"
 #include "Model.h"
 
 #include "CreateSquarePolygon.h"
