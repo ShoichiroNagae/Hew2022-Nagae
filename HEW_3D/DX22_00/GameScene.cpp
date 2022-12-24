@@ -17,7 +17,7 @@ void GameScene::Init()
 	// 定数バッファ作成
 	// コンスタントバッファとして作成するための情報設定
 	D3D11_BUFFER_DESC contstat_buffer_desc{};
-	contstat_buffer_desc.ByteWidth = 4 * 4 * 4 * 4;	// バッファのサイズ（4x4行列x4個）
+	contstat_buffer_desc.ByteWidth = 4 * 4 * 4 * 4 * 2;	// バッファのサイズ（4x4行列x4個）
 	contstat_buffer_desc.Usage = D3D11_USAGE_DYNAMIC;		// 使用方法
 	contstat_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;	// バッファの種類(コンスタントバッファ)
 	contstat_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUアクセス設定
@@ -54,7 +54,7 @@ void GameScene::Init()
 	// 銃モデル読み込み
 	loader = ObjModelLoader();
 	gModelManager["gun"] = loader.Load(
-		"assets/gun.obj", L"assets/gun.png");
+		"assets/Gun.obj", L"assets/Gun.png");
 	// 銃用Modelオブジェクト生成
 	gObjManager["gun"] = new NormalObject();
 	pModel = gObjManager["gun"]->GetModel();
@@ -183,7 +183,7 @@ void GameScene::Update()
 		p2DcharModel->ChangeTexData(L"assets/ground1.jpg");*/
 // **************************************************************	
 
-	// ゲームオブジェクトを描画
+	// ゲームオブジェクトを更新
 	for (auto i = gObjManager.begin();
 		i != gObjManager.end();
 		i++)
