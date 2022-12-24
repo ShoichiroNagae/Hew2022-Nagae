@@ -17,7 +17,7 @@ void GameScene::Init()
 	// 定数バッファ作成
 	// コンスタントバッファとして作成するための情報設定
 	D3D11_BUFFER_DESC contstat_buffer_desc{};
-	contstat_buffer_desc.ByteWidth = 4 * 4 * 4 * 4 *4;	// バッファのサイズ（4x4行列x4個）
+	contstat_buffer_desc.ByteWidth = 4 * 4 * 4 * 4;	// バッファのサイズ（4x4行列x4個）
 	contstat_buffer_desc.Usage = D3D11_USAGE_DYNAMIC;		// 使用方法
 	contstat_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;	// バッファの種類(コンスタントバッファ)
 	contstat_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUアクセス設定
