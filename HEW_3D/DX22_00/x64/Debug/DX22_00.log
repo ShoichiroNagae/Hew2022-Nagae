@@ -1,2 +1,25 @@
-﻿  GameScene.cpp
-  DX22_00.vcxproj -> C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
+﻿  compilation header save succeeded; see C:\Users\トモヤ\Desktop\HAL\02_HAL\GM\HEW\Hew2022-Nagae\HEW_3D\DX22_00\ps.h
+  compilation header save succeeded; see C:\Users\トモヤ\Desktop\HAL\02_HAL\GM\HEW\Hew2022-Nagae\HEW_3D\DX22_00\vs.h
+  BackCamera.cpp
+  BaseScene.cpp
+  BillboardModel.cpp
+  BillboardObject.cpp
+  Camera.cpp
+  Direct3D.cpp
+  GameObject.cpp
+  GameScene.cpp
+  Input.cpp
+  Model.cpp
+  NormalObject.cpp
+  ObjModelLoader.cpp
+  myPolygon.cpp
+  ResultScene.cpp
+  SceneManager.cpp
+  Sprite.cpp
+  TitleScene.cpp
+  UnifyVec.cpp
+  WICTextureLoader.cpp
+  winmain.cpp
+  コードを生成中...
+  LINK : 前回のインクリメンタル リンクで C:\Users\トモヤ\Desktop\HAL\02_HAL\GM\HEW\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
+  DX22_00.vcxproj -> C:\Users\トモヤ\Desktop\HAL\02_HAL\GM\HEW\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
