@@ -28,6 +28,9 @@ public:
 	// 拡大縮小率のxyzを同じ値で設定する
 	void SetScale(float newScale);
 
+	// ワールド上の座標を設定する
+	void Setpos(float mx, float my, float mz);
+
 	// このモデルに適用するカメラオブジェクト
 	Camera* mCamera;
 

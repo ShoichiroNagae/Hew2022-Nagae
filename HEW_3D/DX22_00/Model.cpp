@@ -85,6 +85,13 @@ void Model::SetScale(float newScale)
 	mScale.z = newScale;
 }
 
+void Model::Setpos(float mx, float my, float mz)
+{
+	this->mPos.x = mx;
+	this->mPos.y = my;
+	this->mPos.z = mz;
+}
+
 void Model::GetWVPRMatrix(ConstBufferData& out)
 {
 	XMMATRIX mxRotY = XMMatrixRotationY(
