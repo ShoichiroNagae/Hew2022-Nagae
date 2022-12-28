@@ -21,7 +21,7 @@ public:
 	void Init(void);
 	void Release(void);
 
-	void CreateConstBudder(void);
+	void CreateConstBuffer(void);
 
 	void CameraInit(Camera* cam);
 
@@ -29,6 +29,15 @@ public:
 	// 1.ローダー名 2.オブジェクト名 3.objファイル名 4.テクスチャファイル名
 	void ModelLoad(ObjModelLoader oml,std::string ModelName,
 		const char* pObjFileName, const wchar_t* pTexFileName);
+
+	// 2Dモデルロード
+	void ModelLoad(ObjModelLoader oml,std::string ModelName,
+		float width, float height, float uvWidth, float uvHeight,const wchar_t* pTexFileName);
+	
+	// オブジェクト生成
+	// 1.オブジェクト名 2.倍率 3,4,5 x,y,z座標
+	void ObjectCreate(std::string objName,
+		float mScale, float mx, float my, float mz);
 
 protected:
 
@@ -49,5 +58,8 @@ private:
 	
 	DWORD gDeltaTime;
 
+	// 地面
 	GameObject* gpGround[MAX_GROUND][MAX_GROUND];
+
+	// 地面テクスチャ
 };
