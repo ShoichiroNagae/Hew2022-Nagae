@@ -18,7 +18,7 @@ GameScene::GameScene() {
 }
 
 // 定数バッファ作成
-void GameScene::CreateConstBudder()
+void GameScene::CreateConstBuffer()
 {
 	// 定数バッファ作成
 	// コンスタントバッファとして作成するための情報設定
@@ -55,57 +55,53 @@ void GameScene::ModelLoad(ObjModelLoader oml, std::string ModelName,
 	);
 }
 
+void GameScene::ModelLoad(ObjModelLoader oml,std::string ModelName,
+	float width, float height, float uvWidth, float uvHeight, const wchar_t* pTexFileName)
+{
+	oml = ObjModelLoader();
+	gModelManager[ModelName] = oml.Load(
+		width, height, uvWidth, uvHeight, pTexFileName
+	);
+}
+
+void GameScene::ObjectCreate(std::string objName, float mScale, float mx, float my, float mz)
+{
+	Model* pModel = gObjManager[objName]->GetModel();
+	pModel->SetModelData(gModelManager[objName]);
+	pModel->SetScale(mScale);
+	pModel->Setpos(mx, my, mz);
+	pModel->mCamera = gpCamera;
+}
+
 // 初期化
 void GameScene::Init()
 {	
 	// 定数バッファ作成
-	this->CreateConstBudder();
+	this->CreateConstBuffer();
 
 	// カメラ作成
 	gpCamera = new BackCamera();
 	Camera::mMainCamera = gpCamera;
 	CameraInit(gpCamera);
 
-	// コテージ用Modelオブジェクト生成
+	// モデル読み込み
+	ModelLoad(loader, "ground1", "assets/ground1.obj", L"assets/ground1.jpg");
+	ModelLoad(loader, "gun", "assets/gun.obj", L"assets/gun.png");
 	ModelLoad(loader, "cottage", "assets/cottage.obj", L"assets/cottage.png");
+	ModelLoad(loader, "shot", "assets/billboard.obj", L"assets/shot.png");
+	ModelLoad(loader, "2Dchar", 1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+
+	// コテージ用Modelオブジェクト生成
 	gObjManager["cottage"] = new NormalObject();
-	Model* pModel = gObjManager["cottage"]->GetModel();
-	pModel->SetModelData(gModelManager["cottage"]); // 3Dデータをセット
-	pModel->SetScale(0.001f);
-	pModel->Setpos(-10.0f, -1.0f, 0.0f);
-	pModel->mCamera = gpCamera;
+	ObjectCreate("cottage", 0.001f, -10.0f, -1.0f, 0.0f);
 
 	// 銃用Modelオブジェクト生成
-	ModelLoad(loader, "gun", "assets/gun.obj", L"assets/gun.png");
 	gObjManager["gun"] = new NormalObject();
-	pModel = gObjManager["gun"]->GetModel();
-	pModel->SetModelData(gModelManager["gun"]);
-	pModel->SetScale(1.5f);
-	pModel->Setpos(0.0f, 1.0f, 0.0f);
-	pModel->mRotate.y = 0.0f;
-	pModel->mCamera = gpCamera;
-
-	// 地面モデル読み込み
-	ModelLoad(loader, "ground1", "assets/ground1.obj", L"assets/ground1.jpg");
-
-	// 弾（ビルボード）用モデル読み込み
-	loader = ObjModelLoader();
-	gModelManager["shot"] = loader.Load(
-		"assets/billboard.obj", L"assets/shot.png"
-	);
-
-	// 2Dキャラモデル読み込み
-	loader = ObjModelLoader();
-	gModelManager["2Dchar"] = loader.Load(
-		1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+	ObjectCreate("gun", 1.5f, 0.0f, 1.0f, 0.0f);
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["2Dchar"] = new BillboardObject();
-	pModel = gObjManager["2Dchar"]->GetModel();
-	pModel->SetModelData(gModelManager["2Dchar"]);
-	pModel->SetScale(1.0f);
-	pModel->Setpos(-10.0f, 1.0f, 0.8f);
-	pModel->mCamera = gpCamera;
+	ObjectCreate("2Dchar", 1.0f, -10.0f, 1.0f, 0.8f);
 
 	// 地面を生成
 	for (int i = 0; i < MAX_GROUND; i++){
@@ -114,7 +110,7 @@ void GameScene::Init()
 			Model* pGroundModel = gpGround[i][j]->GetModel();
 			pGroundModel->SetModelData(gModelManager["ground1"]);
 			pGroundModel->SetScale(1.0f);
-			pGroundModel->Setpos(-10.0f + 2.0f * j, -1.0f, -10.0f + 2.0f * i);
+			pGroundModel->Setpos(-10.0f + 2.0f * j, -2.0f, -10.0f + 2.0f * i);
 			pGroundModel->mCamera = gpCamera;
 		}
 	}
@@ -138,14 +134,14 @@ void GameScene::Update()
 
 	// キャラクター移動
 	// →　キャラクターが向いている方向に進ませるには？
-	// 　→　無段階で移動できる
-	// 　→　「前向きベクトル」を使う
+	// →　無段階で移動できる
+	// →「前向きベクトル」を使う
 	gObjManager["gun"]->mSpeed = 0.0f;
 
 	// 銃の前進
 	gObjManager["gun"]->mSpeed = 0.001f;
 
-	// 銃の移動
+	// 主人公の移動
 	Model* pGunModel = gObjManager["gun"]->GetModel();
 	if (Input_GetKeyDown('W')) pGunModel->mPos.y += 0.001f;
 	if (Input_GetKeyDown('S')) pGunModel->mPos.y -= 0.001f;
@@ -156,17 +152,29 @@ void GameScene::Update()
 	if (Input_GetKeyDown('F')) pGunModel->mPos.x += 0.001f;
 
 	// 敵の自動生成(仮)
-	// 条件分岐を
+	// 
 	if (Input_GetKeyDown('P')) {
-		ObjModelLoader loader100 = ObjModelLoader();
-		gModelManager["2Dchar2"] = loader100.Load(
-			1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+		ModelLoad(loader, "2Dchar2", 1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
 		// 2Dキャラオブジェクト生成
 		gObjManager["2Dchar2"] = new BillboardObject();
 		Model*  pModel = gObjManager["2Dchar2"]->GetModel();
 		pModel->SetModelData(gModelManager["2Dchar2"]);
 		pModel->SetScale(1.0f);
 		pModel->mPos.x = -9.0f;
+		pModel->mPos.y = 1.0f;
+		pModel->mPos.z = 0.8f;
+		pModel->mCamera = gpCamera;
+	}
+
+	// 背景テスト
+	if (Input_GetKeyDown('L')) {
+		ModelLoad(loader, "BackGround", 1000.0f, 1000.0f, 1.0f, 1.0f, L"assets/ground1.jpg");
+		// オブジェクト生成
+		gObjManager["BackGround"] = new BillboardObject();
+		Model* pModel = gObjManager["BackGround"]->GetModel();
+		pModel->SetModelData(gModelManager["BackGround"]);
+		pModel->SetScale(1.0f);
+		pModel->mPos.x = -100.0f;
 		pModel->mPos.y = 1.0f;
 		pModel->mPos.z = 0.8f;
 		pModel->mCamera = gpCamera;

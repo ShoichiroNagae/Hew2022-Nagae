@@ -23,7 +23,7 @@ void GameObject::Draw()
 void GameObject::Update()
 {
 	// 前向きベクトルを作る
-	XMFLOAT3 forwardVector;
+	XMFLOAT3 forwardVector{};
 
 	float radianY = XMConvertToRadians(mModel->mRotate.y-90.0f);
 	forwardVector.x = sinf(radianY);
