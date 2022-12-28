@@ -12,82 +12,89 @@
 
 extern ID3D11Buffer* gpConstBuffer; //定数バッファ
 
+// コンストラクタ
+GameScene::GameScene() {
+	Init();
+}
+
+// 定数バッファ作成
+void GameScene::CreateConstBudder()
+{
+	// 定数バッファ作成
+	// コンスタントバッファとして作成するための情報設定
+	D3D11_BUFFER_DESC const_buffef_D{};
+	const_buffef_D.ByteWidth = 4 * 4 * 4 * 4 * 2;				// バッファのサイズ（4x4行列x4個）
+	const_buffef_D.Usage = D3D11_USAGE_DYNAMIC;					// 使用方法
+	const_buffef_D.BindFlags = D3D11_BIND_CONSTANT_BUFFER;		// バッファの種類(コンスタントバッファ)
+	const_buffef_D.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;		// CPUアクセス設定
+	const_buffef_D.MiscFlags = 0;								// その他のオプション
+	const_buffef_D.StructureByteStride = 0;						// 構造体サイズ(行列を使うが今回は0でも動作することを実証する)
+
+	Direct3D_Get()->device->CreateBuffer(&const_buffef_D,
+		nullptr, &gpConstBuffer);
+}
+
+// カメラ初期設定
+void GameScene::CameraInit(Camera* cam)
+{
+	// カメラ初期値
+	// eyeとfocusが同じ座標だとダメ
+	cam->SetEye(DirectX::XMFLOAT3(0.0f, 0.0f, -2.0f));
+	cam->SetFocus(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
+	// upは(0.0f,0.0f,0.0f)だとダメ
+	cam->SetUp(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
+}
+
+// モデル読み込み
+void GameScene::ModelLoad(ObjModelLoader oml, std::string ModelName,
+	const char* pObjFileName, const wchar_t* pTexFileName)
+{
+	oml = ObjModelLoader();
+	gModelManager[ModelName] = oml.Load(
+		pObjFileName, pTexFileName
+	);
+}
+
+// 初期化
 void GameScene::Init()
 {	
 	// 定数バッファ作成
-	// コンスタントバッファとして作成するための情報設定
-	D3D11_BUFFER_DESC contstat_buffer_desc{};
-	contstat_buffer_desc.ByteWidth = 4 * 4 * 4 * 4 *2;	// バッファのサイズ（4x4行列x4個）
-	contstat_buffer_desc.Usage = D3D11_USAGE_DYNAMIC;		// 使用方法
-	contstat_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;	// バッファの種類(コンスタントバッファ)
-	contstat_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;			// CPUアクセス設定
-	contstat_buffer_desc.MiscFlags = 0;				// その他のオプション
-	contstat_buffer_desc.StructureByteStride = 0;			// 構造体サイズ(行列を使うが今回は0でも動作することを実証する)
-
-	Direct3D_Get()->device->CreateBuffer(&contstat_buffer_desc,
-		nullptr, &gpConstBuffer);
+	this->CreateConstBudder();
 
 	// カメラ作成
 	gpCamera = new BackCamera();
 	Camera::mMainCamera = gpCamera;
+	CameraInit(gpCamera);
 
-	// カメラ初期値
-	// eyeとfocusが同じ座標だとダメ
-	gpCamera->SetEye(DirectX::XMFLOAT3(0.0f, 0.0f, -2.0f));
-	gpCamera->SetFocus(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
-	// upは(0.0f,0.0f,0.0f)だとダメ
-	gpCamera->SetUp(DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f));
-
-	// コテージモデル読み込み
-	ObjModelLoader loader;
-	gModelManager["cottage"] = loader.Load(
-		"assets/cottage.obj", L"assets/cottage.png");
 	// コテージ用Modelオブジェクト生成
+	ModelLoad(loader, "cottage", "assets/cottage.obj", L"assets/cottage.png");
 	gObjManager["cottage"] = new NormalObject();
 	Model* pModel = gObjManager["cottage"]->GetModel();
 	pModel->SetModelData(gModelManager["cottage"]); // 3Dデータをセット
 	pModel->SetScale(0.001f);
-	pModel->mPos.z = 4.0f;
-	pModel->mPos.y = 0.0f;
+	pModel->Setpos(-10.0f, -1.0f, 0.0f);
 	pModel->mCamera = gpCamera;
 
-	// 銃モデル読み込み
-	loader = ObjModelLoader();
-	gModelManager["gun"] = loader.Load(
-		"assets/gun.obj", L"assets/gun.png");
 	// 銃用Modelオブジェクト生成
+	ModelLoad(loader, "gun", "assets/gun.obj", L"assets/gun.png");
 	gObjManager["gun"] = new NormalObject();
 	pModel = gObjManager["gun"]->GetModel();
 	pModel->SetModelData(gModelManager["gun"]);
 	pModel->SetScale(1.5f);
-	pModel->mPos.z = 0.0f;
-	pModel->mPos.y = 0.8f;
-	pModel->mPos.x = 0.0f;
+	pModel->Setpos(0.0f, 1.0f, 0.0f);
 	pModel->mRotate.y = 0.0f;
 	pModel->mCamera = gpCamera;
 
 	// 地面モデル読み込み
-	loader = ObjModelLoader();
-	gModelManager["ground1"] = loader.Load(
-		"assets/ground1.obj", L"assets/ground1.jpg"
-	);
-	// コテージモデルオブジェクト生成
-	gObjManager["cottage"] = new NormalObject();
-	pModel = gObjManager["cottage"]->GetModel();
-	pModel->SetModelData(gModelManager["cottage"]);
-	pModel->SetScale(1.5f);
-	pModel->mPos.z = 0.0f;
-	pModel->mPos.y = 0.8f;
-	pModel->mPos.z = 0.0f;
-	pModel->mRotate.y = 0.0f;
-	pModel->mCamera = gpCamera;
+	ModelLoad(loader, "ground1", "assets/ground1.obj", L"assets/ground1.jpg");
+
 	// 弾（ビルボード）用モデル読み込み
 	loader = ObjModelLoader();
 	gModelManager["shot"] = loader.Load(
 		"assets/billboard.obj", L"assets/shot.png"
 	);
 
-	//// 2Dキャラモデル読み込み
+	// 2Dキャラモデル読み込み
 	loader = ObjModelLoader();
 	gModelManager["2Dchar"] = loader.Load(
 		1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
@@ -97,9 +104,7 @@ void GameScene::Init()
 	pModel = gObjManager["2Dchar"]->GetModel();
 	pModel->SetModelData(gModelManager["2Dchar"]);
 	pModel->SetScale(1.0f);
-	pModel->mPos.x = -10.0f;
-	pModel->mPos.y = 1.0f;
-	pModel->mPos.z = 0.8f;
+	pModel->Setpos(-10.0f, 1.0f, 0.8f);
 	pModel->mCamera = gpCamera;
 
 	// 地面を生成
@@ -109,25 +114,13 @@ void GameScene::Init()
 			Model* pGroundModel = gpGround[i][j]->GetModel();
 			pGroundModel->SetModelData(gModelManager["ground1"]);
 			pGroundModel->SetScale(1.0f);
-			pGroundModel->mPos.x = -10.0f + 2.0f * j;
-			pGroundModel->mPos.z = -10.0f + 2.0f * i;
-			pGroundModel->mPos.y = -1.0f;
+			pGroundModel->Setpos(-10.0f + 2.0f * j, -1.0f, -10.0f + 2.0f * i);
 			pGroundModel->mCamera = gpCamera;
 		}
 	}
 
 	// 追従カメラが追従する対象を設定
 	((BackCamera*)gpCamera)->SetTarget(gObjManager["gun"]);
-}
-
-// 初期化
-GameScene::GameScene(){
-	Init();
-}
-
-// 解放
-GameScene::~GameScene(){
-	Release();
 }
 
 void GameScene::Update()
@@ -154,23 +147,30 @@ void GameScene::Update()
 
 	// 銃の移動
 	Model* pGunModel = gObjManager["gun"]->GetModel();
-	if (Input_GetKeyDown('W'))
-		pGunModel->mPos.y += 0.001f;
-
-	if (Input_GetKeyDown('S'))
-		pGunModel->mPos.y -= 0.001f;
-
-	if (Input_GetKeyDown('A'))
-		pGunModel->mPos.z -= 0.001f;
-
-	if (Input_GetKeyDown('D'))
-		pGunModel->mPos.z += 0.001f;
+	if (Input_GetKeyDown('W')) pGunModel->mPos.y += 0.001f;
+	if (Input_GetKeyDown('S')) pGunModel->mPos.y -= 0.001f;
+	if (Input_GetKeyDown('A')) pGunModel->mPos.z -= 0.001f;
+	if (Input_GetKeyDown('D')) pGunModel->mPos.z += 0.001f;
 	// 加速・減速
-	if (Input_GetKeyDown('R'))
-		pGunModel->mPos.x -= 0.001f;
+	if (Input_GetKeyDown('R')) pGunModel->mPos.x -= 0.001f;
+	if (Input_GetKeyDown('F')) pGunModel->mPos.x += 0.001f;
 
-	if (Input_GetKeyDown('F'))
-		pGunModel->mPos.x += 0.001f;
+	// 敵の自動生成(仮)
+	// 条件分岐を
+	if (Input_GetKeyDown('P')) {
+		ObjModelLoader loader100 = ObjModelLoader();
+		gModelManager["2Dchar2"] = loader100.Load(
+			1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+		// 2Dキャラオブジェクト生成
+		gObjManager["2Dchar2"] = new BillboardObject();
+		Model*  pModel = gObjManager["2Dchar2"]->GetModel();
+		pModel->SetModelData(gModelManager["2Dchar2"]);
+		pModel->SetScale(1.0f);
+		pModel->mPos.x = -9.0f;
+		pModel->mPos.y = 1.0f;
+		pModel->mPos.z = 0.8f;
+		pModel->mCamera = gpCamera;
+	}
 
 // ************************************************************* 
 	// アニメーション切り替わりテスト
@@ -243,14 +243,15 @@ void GameScene::Draw()
 	d3d->swapChain->Present(0, 0);
 }
 
+// 解放
 void GameScene::Release()
 {
 	// 弾管理配列の中身をすべて削除する
 
 
-	// 地面の要素をすべて削除する
-	for (int i = 0; i < MAX_GROUND; i++){
-		for (int j = 0; j < MAX_GROUND; j++){
+	// 地面の要s素をすべて削除する
+	for (int i = 0; i < MAX_GROUND; i++) {
+		for (int j = 0; j < MAX_GROUND; j++) {
 			delete gpGround[i][j];
 		}
 	}
@@ -280,4 +281,9 @@ void GameScene::Release()
 	}
 	// 連想配列の要素を全削除
 	gObjManager.clear();
+}
+
+// デストラクタ
+GameScene::~GameScene() {
+	Release();
 }

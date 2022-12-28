@@ -12,19 +12,29 @@ constexpr auto MAX_GROUND = (10);
 class GameScene : public BaseScene
 {
 public:
-	GameScene();
-	~GameScene();
+	GameScene(void);
+	~GameScene(void);
 
-	void Update();
-	void Draw();
+	void Update(void);
+	void Draw(void);
 
-	void Init();
-	void Release();
+	void Init(void);
+	void Release(void);
+
+	void CreateConstBudder(void);
+
+	void CameraInit(Camera* cam);
+
+	// 3Dモデルロード
+	// 1.ローダー名 2.オブジェクト名 3.objファイル名 4.テクスチャファイル名
+	void ModelLoad(ObjModelLoader oml,std::string ModelName,
+		const char* pObjFileName, const wchar_t* pTexFileName);
 
 protected:
 
 private:
 	Camera* gpCamera; // カメラ
+	ObjModelLoader loader;	// モデルのローダー
 
 	// モデルマネージャー
 	// 名前で格納する 呼び出すときはstring型

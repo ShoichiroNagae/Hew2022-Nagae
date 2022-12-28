@@ -16,7 +16,7 @@ public:
 
 private:
 	// ’Ç]‘ÎÛ
-	GameObject* mTarget;
+	GameObject* mTarget{};
 
 };
 
