@@ -183,7 +183,7 @@ void TitleScene::Init()
 void TitleScene::InitCamera(Camera* cam)
 {
 	// カメラ初期値
-// eyeとfocusが同じ座標だとダメ
+	// eyeとfocusが同じ座標だとダメ
 	cam->SetEye(DirectX::XMFLOAT3(0.0f, 0.0f, -2.0f));
 	cam->SetFocus(DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f));
 	// upは(0.0f,0.0f,0.0f)だとダメ
@@ -193,7 +193,7 @@ void TitleScene::InitCamera(Camera* cam)
 void TitleScene::CreateConstBuffer()
 {
 	// 定数バッファ作成
-// コンスタントバッファとして作成するための情報設定
+	// コンスタントバッファとして作成するための情報設定
 	D3D11_BUFFER_DESC const_buffef_D{};
 	const_buffef_D.ByteWidth = 4 * 4 * 4 * 4 * 2;				// バッファのサイズ（4x4行列x4個）
 	const_buffef_D.Usage = D3D11_USAGE_DYNAMIC;					// 使用方法

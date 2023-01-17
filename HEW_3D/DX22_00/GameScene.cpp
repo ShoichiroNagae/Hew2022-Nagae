@@ -9,6 +9,7 @@
 #include "Model.h"
 
 #include "CreateSquarePolygon.h"
+#include "SceneManager.h"
 
 extern ID3D11Buffer* gpConstBuffer; //定数バッファ
 
@@ -210,6 +211,11 @@ void GameScene::Update()
 
 	// カメラの更新処理（ビュー変換行列計算）
 	gpCamera->Update();
+
+	// テストでリザルト画面に遷移
+	if (Input_GetKeyDown('P')) {
+		SceneManager::ChangeScene(SceneManager::RESULT);
+	}
 }
 
 void GameScene::Draw()
