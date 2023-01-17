@@ -85,23 +85,22 @@ void GameScene::Init()
 	CameraInit(gpCamera);
 
 	// モデル読み込み
-	ModelLoad(loader, "ground1", "assets/ground1.obj", L"assets/ground1.jpg");
-	ModelLoad(loader, "gun", "assets/gun.obj", L"assets/gun.png");
-	ModelLoad(loader, "cottage", "assets/cottage.obj", L"assets/cottage.png");
-	ModelLoad(loader, "shot", "assets/billboard.obj", L"assets/shot.png");
-	ModelLoad(loader, "2Dchar", 1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+	ModelLoad(loader, "ground1", "assets/Game/ground1.obj", L"assets/Game/ground1.jpg");	// 地面
+	ModelLoad(loader, "Player", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/char01.png");		// プレイヤー
+	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/Enemy.png");		// 敵
 
-	// コテージ用Modelオブジェクト生成
-	gObjManager["cottage"] = new NormalObject();
-	ObjectCreate("cottage", 0.001f, -10.0f, -1.0f, 0.0f);
-
-	// 銃用Modelオブジェクト生成
-	gObjManager["gun"] = new NormalObject();
-	ObjectCreate("gun", 1.5f, 0.0f, 1.0f, 0.0f);
 
 	// 2Dキャラオブジェクト生成
-	gObjManager["2Dchar"] = new BillboardObject();
-	ObjectCreate("2Dchar", 1.0f, -10.0f, 1.0f, 0.8f);
+	gObjManager["Player"] = new BillboardObject();
+	ObjectCreate("Player", 1.5f, 0.0f, 1.0f, 0.0f);
+	Model* pModel = gObjManager["Player"]->GetModel();
+	pModel->mRotate.y = 90.0f;	// プレイヤーをZ軸方向に向ける
+	pModel->mCamera = gpCamera;
+
+	// 2Dキャラオブジェクト生成
+	gObjManager["Enemy"] = new NormalObject();
+	ObjectCreate("Enemy", 1.5f, 0.0f, 1.0f, 10.0f);
+	enemyPosTEST = 0.0f;
 
 	// 地面を生成
 	for (int i = 0; i < MAX_GROUND; i++){
@@ -116,7 +115,7 @@ void GameScene::Init()
 	}
 
 	// 追従カメラが追従する対象を設定
-	((BackCamera*)gpCamera)->SetTarget(gObjManager["gun"]);
+	((BackCamera*)gpCamera)->SetTarget(gObjManager["Player"]);
 }
 
 void GameScene::Update()
@@ -133,41 +132,35 @@ void GameScene::Update()
 	}
 
 	// キャラクター移動
-	// →　キャラクターが向いている方向に進ませるには？
-	// →　無段階で移動できる
-	// →「前向きベクトル」を使う
-	gObjManager["gun"]->mSpeed = 0.0f;
+	gObjManager["Player"]->mSpeed = 0.001f;
 
-	// 銃の前進
-	gObjManager["gun"]->mSpeed = 0.001f;
 
 	// 主人公の移動
-	Model* pGunModel = gObjManager["gun"]->GetModel();
-	if (Input_GetKeyDown('W')) pGunModel->mPos.y += 0.001f;
-	if (Input_GetKeyDown('S')) pGunModel->mPos.y -= 0.001f;
-	if (Input_GetKeyDown('A')) pGunModel->mPos.z -= 0.001f;
-	if (Input_GetKeyDown('D')) pGunModel->mPos.z += 0.001f;
-	// 加速・減速
-	if (Input_GetKeyDown('R')) pGunModel->mPos.x -= 0.001f;
-	if (Input_GetKeyDown('F')) pGunModel->mPos.x += 0.001f;
+	Model* pPlayerModel = gObjManager["Player"]->GetModel();
+	if (Input_GetKeyDown('W')) pPlayerModel->mPos.y += 0.001f;
+	if (Input_GetKeyDown('S')) pPlayerModel->mPos.y -= 0.001f;
+	if (Input_GetKeyDown('A')) pPlayerModel->mPos.x -= 0.001f;
+	if (Input_GetKeyDown('D')) pPlayerModel->mPos.x += 0.001f;
+	// 加速・減速				
+	if (Input_GetKeyDown('R')) pPlayerModel->mPos.z -= 0.001f;
+	if (Input_GetKeyDown('F')) pPlayerModel->mPos.z += 0.001f;
+
 
 	// 敵の自動生成(仮)
-	// 
-	if (Input_GetKeyDown('P')) {
-		ModelLoad(loader, "2Dchar2", 1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
-		// 2Dキャラオブジェクト生成
-		gObjManager["2Dchar2"] = new BillboardObject();
-		Model*  pModel = gObjManager["2Dchar2"]->GetModel();
-		pModel->SetModelData(gModelManager["2Dchar2"]);
-		pModel->SetScale(1.0f);
-		pModel->mPos.x = -9.0f;
-		pModel->mPos.y = 1.0f;
-		pModel->mPos.z = 0.8f;
-		pModel->mCamera = gpCamera;
+	if (Input_GetKeyDown(VK_SPACE))
+	{
+		GameObject* tmp = new NormalObject();
+		Model* pEnemyModel = tmp->GetModel();
+		pEnemyModel->SetModelData(gModelManager["Enemy"]);
+		pEnemyModel->SetScale(1.5f);
+		pEnemyModel->mPos.z = 10.0f;
+		pEnemyModel->mPos.x = enemyPosTEST;
+		pEnemyModel->mCamera = gpCamera;
+		gEnemyManager.emplace_back(tmp);
+		enemyPosTEST += 0.1f;
 	}
-
 	// 背景テスト
-	if (Input_GetKeyDown('L')) {
+	if (Input_GetKeyTrigger('L')) {
 		ModelLoad(loader, "BackGround", 1000.0f, 1000.0f, 1.0f, 1.0f, L"assets/ground1.jpg");
 		// オブジェクト生成
 		gObjManager["BackGround"] = new BillboardObject();
@@ -196,6 +189,10 @@ void GameScene::Update()
 		i != gObjManager.end();
 		i++)
 		i->second->Update();
+
+	// 敵を全て更新
+	for (int i = 0; i < gEnemyManager.size(); i++)
+		gEnemyManager[i]->Update();
 
 	// 弾管理配列の中身をすべて更新する
 	for (int i = 0; i < gShotManager.size(); i++)
@@ -236,6 +233,11 @@ void GameScene::Draw()
 			gpGround[i][j]->Draw();
 		}
 	}
+
+
+	// 敵を全て描画
+	for (int i = 0; i < gEnemyManager.size(); i++)
+		gEnemyManager[i]->Draw();
 
 	// ゲームオブジェクトを描画
 	for (auto i = gObjManager.begin();

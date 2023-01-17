@@ -44,12 +44,16 @@ protected:
 private:
 	Camera* gpCamera; // カメラ
 	ObjModelLoader loader;	// モデルのローダー
+	float enemyPosTEST;
 
 	// モデルマネージャー
 	// 名前で格納する 呼び出すときはstring型
 	std::map <std::string, ModelData> gModelManager;
 	// オブジェクトマネージャー
 	std::map <std::string, GameObject*> gObjManager;
+	// エネミーマネージャー
+	std::vector<GameObject*> gEnemyManager;
+
 	// 銃弾マネージャー
 	std::vector<GameObject*> gShotManager;
 
