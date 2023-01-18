@@ -4,10 +4,16 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <random>
 #include "ObjModelLoader.h"
 
 // マクロ定義
 constexpr auto MAX_GROUND = (10);
+
+// プレイヤーの視界内に入るX座標の範囲
+#define ENEMY_MIN_XPOS	(-7.0f);	// 最小値(左端)
+#define ENEMY_MAX_XPOS	(7.0f);		// 最大値(右端)
+#define ENEMY_SPEED_DEF (0.001f);	// スピード　初期値
 
 class GameScene : public BaseScene
 {
@@ -44,7 +50,6 @@ protected:
 private:
 	Camera* gpCamera; // カメラ
 	ObjModelLoader loader;	// モデルのローダー
-	float enemyPosTEST;
 
 	// モデルマネージャー
 	// 名前で格納する 呼び出すときはstring型
@@ -65,5 +70,6 @@ private:
 	// 地面
 	GameObject* gpGround[MAX_GROUND][MAX_GROUND];
 
-	// 地面テクスチャ
+	// 敵を自動で生成する関数
+	void CreateEnemy();
 };

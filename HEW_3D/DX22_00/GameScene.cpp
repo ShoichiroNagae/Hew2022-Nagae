@@ -73,6 +73,33 @@ void GameScene::ObjectCreate(std::string objName, float mScale, float mx, float 
 	pModel->mCamera = gpCamera;
 }
 
+// 敵の自動生成
+void GameScene::CreateEnemy()
+{
+	int min = ENEMY_MIN_XPOS;
+	int max = ENEMY_MAX_XPOS;
+	std::random_device rnd;									// 非決定的な乱数生成器を生成
+	std::mt19937 mt(rnd());									//  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
+	std::uniform_int_distribution<> randDecimal(0, 99);		// [0, 99] 範囲の乱数
+	std::uniform_int_distribution<> randInteger(min, max);	// プレイヤーに見える範囲の乱数
+
+	// 敵の位置をランダムで決定
+	float EnemyPosX = randInteger(mt);
+	EnemyPosX += (randDecimal(mt) * 0.01f);
+
+	// 敵を生成
+	GameObject* tmp = new NormalObject();
+	Model* pEnemyModel = tmp->GetModel();
+	tmp->mSpeed = -ENEMY_SPEED_DEF;
+	pEnemyModel->SetModelData(gModelManager["Enemy"]);
+	pEnemyModel->SetScale(1.0f);
+	pEnemyModel->mPos.z = 10.0f;
+	pEnemyModel->mPos.x = EnemyPosX;
+	pEnemyModel->mRotate.y = 90.0f;
+	pEnemyModel->mCamera = gpCamera;
+	gEnemyManager.emplace_back(tmp);
+}
+
 // 初期化
 void GameScene::Init()
 {	
@@ -100,7 +127,6 @@ void GameScene::Init()
 	// 2Dキャラオブジェクト生成
 	gObjManager["Enemy"] = new NormalObject();
 	ObjectCreate("Enemy", 1.5f, 0.0f, 1.0f, 10.0f);
-	enemyPosTEST = 0.0f;
 
 	// 地面を生成
 	for (int i = 0; i < MAX_GROUND; i++){
@@ -132,7 +158,7 @@ void GameScene::Update()
 	}
 
 	// キャラクター移動
-	gObjManager["Player"]->mSpeed = 0.001f;
+	//gObjManager["Player"]->mSpeed = 0.001f;
 
 
 	// 主人公の移動
@@ -147,17 +173,9 @@ void GameScene::Update()
 
 
 	// 敵の自動生成(仮)
-	if (Input_GetKeyDown(VK_SPACE))
+	if (Input_GetKeyTrigger(VK_SPACE))
 	{
-		GameObject* tmp = new NormalObject();
-		Model* pEnemyModel = tmp->GetModel();
-		pEnemyModel->SetModelData(gModelManager["Enemy"]);
-		pEnemyModel->SetScale(1.5f);
-		pEnemyModel->mPos.z = 10.0f;
-		pEnemyModel->mPos.x = enemyPosTEST;
-		pEnemyModel->mCamera = gpCamera;
-		gEnemyManager.emplace_back(tmp);
-		enemyPosTEST += 0.1f;
+		CreateEnemy();
 	}
 	// 背景テスト
 	if (Input_GetKeyTrigger('L')) {
@@ -291,6 +309,10 @@ void GameScene::Release()
 	}
 	// 連想配列の要素を全削除
 	gObjManager.clear();
+
+	// 敵マネージャーの要素を全て開放
+	for (int i = 0; i < gEnemyManager.size(); i++)
+		delete gEnemyManager[i];
 }
 
 // デストラクタ
