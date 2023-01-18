@@ -48,6 +48,14 @@ public:
 	// UVアニメーション用オフセット
 	DirectX::XMFLOAT2 mUvOffset = DirectX::XMFLOAT2(0, 0);
 
+	// 追加機能
+	// アニメーションの分割数情報をセット(Init時設定でお願いします)
+	void SetUVSplit(DirectX::XMFLOAT4 mSetUV);
+
+	// 変数:アニメーションUVの方向, 
+	void SlideAnimation(DIRECTION mDirection);
+
+
 protected:
 	// 3Dデータを持つ変数
 	ModelData mModelData;
@@ -78,5 +86,12 @@ protected:
 	// ワールド，ビュー，プロジェクション，回転行列を作成して
 	// outにセットする
 	virtual void GetWVPRMatrix(ConstBufferData& out);
+
+
+	// アニメーションの分割数データ
+	DirectX::XMFLOAT4 mUVSplit = DirectX::XMFLOAT4(0.00f, 0.00f, 0.00f, 0.00f);
+private:
+	float uvWidth = 0.0f;  // キャラクター１コマのUの幅
+	float uvHeight = 0.0f; // キャラクター１コマのVの高さ
 };
 

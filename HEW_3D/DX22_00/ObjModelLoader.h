@@ -2,6 +2,7 @@
 
 #include "ModelData.h"
 #include <vector>
+#include <DirectXMath.h>
 
 /*
 	3Dモデルデータ「OBJファイル」読み込みサンプル
@@ -19,7 +20,7 @@ public:
 	// OBJファイルとテクスチャを読み込んでModelDataとして返す
 	ModelData Load(const char* pObjFileName, const wchar_t* pTexFileName);
 	// 2Dモデルデータ用
-	ModelData Load(float width, float height, float uvWidth, float uvHeight, const wchar_t* pTexFileName);
+	ModelData Load(DirectX::XMFLOAT4 SetSize, const wchar_t* pTexFileName);
 private:
 	void FinSkip();
 	void FinVertex();

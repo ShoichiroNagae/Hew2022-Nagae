@@ -22,6 +22,9 @@ public:
 	// 移動速度
 	float mSpeed;
 
+	/// テクスチャ配列(動作が重くなった為未実装)
+	float animTime = 0.000f;
+	int animFlame = 0;
 protected:
 	// このクラスで表示させるモデル
 	Model* mModel;

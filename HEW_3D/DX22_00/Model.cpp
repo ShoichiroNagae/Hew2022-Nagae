@@ -132,3 +132,73 @@ void Model::GetWVPRMatrix(ConstBufferData& out)
 	out.projection = XMMatrixTranspose(mxProjection);
 	out.worldRotate = XMMatrixTranspose(mxRotate);
 }
+
+void Model::SetUVSplit(DirectX::XMFLOAT4 mSetUV)
+{
+	mUVSplit = mSetUV;
+}
+
+void Model::SlideAnimation(DIRECTION mDirection)
+{
+	if (mUVSplit.z == 0.00f || mUVSplit.w == 0.00f)
+	{
+		// UV分割数がセットされていない不十分な時、処理を無視
+	}
+	else
+	{
+		uvWidth += mUVSplit.z;  // キャラクター１コマのUの幅
+		uvHeight += mUVSplit.w; // キャラクター１コマのVの高さ
+
+		// コマが最後まで来たら最初に戻す
+		if (uvWidth >= 1.01f)
+		{
+			uvWidth = mUVSplit.z;
+		}
+		if (uvHeight >= 1.01f)
+		{
+			uvHeight = mUVSplit.w;
+		}
+
+
+		// モデル頂点データ作成
+		const float w = mUVSplit.x / 2.0f;
+		const float h = mUVSplit.y / 2.0f;
+
+		// (x, y, z), (r, g, b, a), (u, v)
+		// 正面
+		ModelVertex vx[6];
+		vx[0] = { -w,  h, 0, 1, 1, 1, 1, 0.0f, 0.0f };      // 左上
+		vx[1] = { w,  h, 0, 1, 1, 1, 1, uvWidth, 0.0f };    // 右上
+		vx[2] = { w, -h, 0, 1, 1, 1, 1, uvWidth, uvHeight };// 右下
+
+		vx[3] = { w, -h, 0, 1, 1, 1, 1, uvWidth, uvHeight };// 右下
+		vx[4] = { -w, -h, 0, 1, 1, 1, 1, 0.0f, uvHeight };   // 左下
+		vx[5] = { -w,  h, 0, 1, 1, 1, 1, 0.0f, 0.0f };      // 左上
+
+		mModelData.mNumVertex = sizeof(vx) / sizeof(ModelVertex); // 頂点数を計算
+
+		// モデル用の頂点バッファ作成
+		D3D11_BUFFER_DESC bufferDesc;
+		bufferDesc.ByteWidth = sizeof(vx);
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDesc.CPUAccessFlags = 0;
+		bufferDesc.MiscFlags = 0;
+		bufferDesc.StructureByteStride = 0;
+
+		// バッファの初期値指定
+		D3D11_SUBRESOURCE_DATA initialVertexData;
+		// 頂点バッファの初期値
+		initialVertexData.pSysMem = vx;
+		// 頂点バッファでは使用しない
+		initialVertexData.SysMemPitch = 0;
+		initialVertexData.SysMemSlicePitch = 0;
+
+		HRESULT hr = Direct3D_Get()->device->CreateBuffer(&bufferDesc, &initialVertexData, &mModelData.mVertexBuffer);
+
+		if (FAILED(hr))
+		{
+			throw hr;
+		}
+	}
+}

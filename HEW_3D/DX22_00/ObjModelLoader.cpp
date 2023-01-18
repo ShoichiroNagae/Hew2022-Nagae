@@ -96,22 +96,23 @@ END_OF_FILE:
 	return modelData;
 }
 
-ModelData ObjModelLoader::Load(float width, float height, float uvWidth, float uvHeight, const wchar_t* pTexFileName)
+ModelData ObjModelLoader::Load(DirectX::XMFLOAT4 setSize, const wchar_t* pTexFileName)
 {
 	// モデル頂点データ作成
-	const float w = width / 2.0f;
-	const float h = height / 2.0f;
-	ModelVertex vx[] = {
-		// (x, y, z), (r, g, b, a), (u, v)
-		// 正面
-		{ -w,  h, 0, 1, 1, 1, 1, 0.0f, 0.0f },       // 左上
-		{  w,  h, 0, 1, 1, 1, 1, uvWidth, 0.0f },    // 右上
-		{  w, -h, 0, 1, 1, 1, 1, uvWidth, uvHeight },// 右下
+	const float w = setSize.x / 2.0f;
+	const float h = setSize.y / 2.0f;
+	float uvWidth = setSize.z;
+	float uvHeight = setSize.w;
+	// (x, y, z), (r, g, b, a), (u, v)
+	// 正面
+	ModelVertex vx[6];
+	vx[0] = { -w,  h, 0, 1, 1, 1, 1, 0.0f, 0.0f };      // 左上
+	vx[1] = { w,  h, 0, 1, 1, 1, 1, uvWidth, 0.0f };    // 右上
+	vx[2] = { w, -h, 0, 1, 1, 1, 1, uvWidth, uvHeight };// 右下
 
-		{  w, -h, 0, 1, 1, 1, 1, uvWidth, uvHeight },// 右下
-		{ -w, -h, 0, 1, 1, 1, 1, 0.0f, uvHeight },   // 左下
-		{ -w,  h, 0, 1, 1, 1, 1, 0.0f, 0.0f },       // 左上
-	};
+	vx[3] = { w, -h, 0, 1, 1, 1, 1, uvWidth, uvHeight };// 右下
+	vx[4] = { -w, -h, 0, 1, 1, 1, 1, 0.0f, uvHeight };   // 左下
+	vx[5] = { -w,  h, 0, 1, 1, 1, 1, 0.0f, 0.0f };      // 左上
 
 	ModelData modelData;
 
@@ -145,6 +146,7 @@ ModelData ObjModelLoader::Load(float width, float height, float uvWidth, float u
 
 	return modelData;
 }
+
 
 void ObjModelLoader::FinSkip()
 {

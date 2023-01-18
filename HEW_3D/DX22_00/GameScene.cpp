@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "Model.h"
+#include "BillboardModel.h"
 
 #include "CreateSquarePolygon.h"
 
@@ -88,9 +89,10 @@ void GameScene::Init()
 	);
 
 	//// 2Dキャラモデル読み込み
+	//GameScene.hにサイズ変数を定義する
 	loader = ObjModelLoader();
 	gModelManager["2Dchar"] = loader.Load(
-		1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+		CHAR2DSize, L"assets/char01.png");
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["2Dchar"] = new BillboardObject();
@@ -101,6 +103,7 @@ void GameScene::Init()
 	pModel->mPos.y = 1.0f;
 	pModel->mPos.z = 0.8f;
 	pModel->mCamera = gpCamera;
+	pModel->SetUVSplit(CHAR2DSize);
 
 	// 地面を生成
 	for (int i = 0; i < MAX_GROUND; i++){
@@ -177,7 +180,18 @@ void GameScene::Update()
 	// gObjManagerから別のobjectに切り替える
 	// 
 	//// 条件変更
-	//BillboardModel* p2DcharModel = gObjManager["2Dchar"]->GetModel();
+	// if(状態変数)を用意してアニメーションの管理をする
+	Model* p2DcharModel = gObjManager["2Dchar"]->GetModel();
+	if ((int)gObjManager["2Dchar"]->animTime != gObjManager["2Dchar"]->animFlame) {
+		if (gObjManager["2Dchar"]->animTime / CHAR2DSize.z >= 1.01f
+			|| gObjManager["2Dchar"]->animTime / CHAR2DSize.w >= 1.01f) {
+			gObjManager["2Dchar"]->animTime = 0.0f;
+		}
+		gObjManager["2Dchar"]->animFlame = (int)gObjManager["2Dchar"]->animTime;
+		p2DcharModel->SlideAnimation(RIGHT);
+	}
+	// if(animTime指定)でフレームも増加を変化
+	gObjManager["2Dchar"]->animTime += 0.004f * gDeltaTime;
 
 	/*if (Input_GetKeyDown(VK_SPACE))
 		p2DcharModel->ChangeTexData(L"assets/ground1.jpg");*/

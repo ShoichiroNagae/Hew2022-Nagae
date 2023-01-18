@@ -33,3 +33,13 @@ struct VERTEX3D  // VERTEX = 頂点
 	RGBA color;  // 頂点の色
 	float u, v;  // テクスチャのUV座標
 };
+
+// アニメーションの方向指定
+enum DIRECTION
+{
+	NONE,
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};

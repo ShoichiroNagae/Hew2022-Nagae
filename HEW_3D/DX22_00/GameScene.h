@@ -6,8 +6,11 @@
 #include <vector>
 #include "ObjModelLoader.h"
 
+using namespace DirectX; // "DirectX"namespaceを今後省略する
+
 // マクロ定義
 constexpr auto MAX_GROUND = (10);
+
 
 class GameScene : public BaseScene
 {
@@ -21,6 +24,8 @@ public:
 	void Init();
 	void Release();
 
+	// ビルボードオブジェクトのサイズ(w,h,uvW,uvH)
+	XMFLOAT4 CHAR2DSize = XMFLOAT4(1.0f, 1.2f, 0.33f, 0.25f);
 protected:
 
 private:
