@@ -8,11 +8,13 @@ GameObject::GameObject()
 {
 	mModel = nullptr;
 	mSpeed = 0.0f;
+	mHit = nullptr;
 }
 
 GameObject::~GameObject()
 {
 	delete mModel;
+	delete mHit;
 }
 
 void GameObject::Draw()

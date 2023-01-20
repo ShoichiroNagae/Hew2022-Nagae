@@ -1,5 +1,6 @@
 ﻿  GameScene.cpp
-C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(79,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
-C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(80,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
-C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(87,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(81,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(82,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(90,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(92,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
   DX22_00.vcxproj -> C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe

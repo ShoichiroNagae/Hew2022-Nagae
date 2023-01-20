@@ -8,11 +8,11 @@
 #include "ObjModelLoader.h"
 
 // マクロ定義
-constexpr auto MAX_GROUND = (10);
+constexpr auto MAX_GROUND = (100);
 
 // プレイヤーの視界内に入るX座標の範囲
-#define ENEMY_MIN_XPOS	(-7.0f);	// 最小値(左端)
-#define ENEMY_MAX_XPOS	(7.0f);		// 最大値(右端)
+#define ENEMY_MIN_XPOS	(-5.0f);	// 最小値(左端)
+#define ENEMY_MAX_XPOS	(3.0f);		// 最大値(右端)
 #define ENEMY_SPEED_DEF (0.001f);	// スピード　初期値
 
 class GameScene : public BaseScene
@@ -50,6 +50,8 @@ protected:
 private:
 	Camera* gpCamera; // カメラ
 	ObjModelLoader loader;	// モデルのローダー
+	int frameCount;		// フレームカウント
+	float playerSpeed;	// スピード一時保存用
 
 	// モデルマネージャー
 	// 名前で格納する 呼び出すときはstring型
@@ -68,8 +70,12 @@ private:
 	DWORD gDeltaTime;
 
 	// 地面
-	GameObject* gpGround[MAX_GROUND][MAX_GROUND];
+	std::vector<GameObject*> gGround;
 
 	// 敵を自動で生成する関数
 	void CreateEnemy();
+	// 敵を消してもいいか判定する関数
+	bool CheckEnemy(GameObject* _enemy);
+	// プレイヤーの移動範囲を制限する
+	void MoveLimit();
 };
