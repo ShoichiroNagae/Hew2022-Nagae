@@ -157,7 +157,9 @@ void GameScene::Init()
 	ModelLoad(loader, "ground1", "assets/Game/ground1.obj", L"assets/Game/ground1.jpg");	// 地面
 	ModelLoad(loader, "Player", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/char01.png");		// プレイヤー
 	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/Enemy.png");		// 敵
+	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");		// 背景
 
+	ModelLoad(loader, "clearLogo", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/clearlogo.png");	// プレイヤー
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["Player"] = new BillboardObject();
@@ -168,8 +170,15 @@ void GameScene::Init()
 	pModel->mPos.y = 3.0f;
 	HitSphere* pHit = gObjManager["Player"]->GetHit();                                                                                                            
 	pHit->SetHankei(1.0f);
-	gObjManager["Player"]->mSpeed = 0.01f;
+	gObjManager["Player"]->mSpeed = 0.005f;
 
+	// クリアロゴ生成
+	gObjManager["clearlogo"] = new NormalObject();
+	ObjectCreate("Player", 1.5f, 0.0f, 1.0f, 0.0f);
+	pModel->mRotate.y = 90.0f;	// プレイヤーをZ軸方向に向ける
+	pModel->mCamera = gpCamera;
+	pModel->m2dRender = true;
+	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
 
 	// 地面を生成
 	pModel = nullptr;
@@ -328,23 +337,19 @@ void GameScene::Update()
 	}
 
 	// 敵の自動生成
-	if (frameCount == 500) CreateEnemy();
-	if (frameCount > 500) frameCount = 0;
-
-	// 当たり判定テスト
-
+	if (frameCount == 50) CreateEnemy();
+	if (frameCount > 50) frameCount = 0;
 
 	// 背景テスト
 	if (Input_GetKeyTrigger('L')) {
-		ModelLoad(loader, "BackGround", 1000.0f, 1000.0f, 1.0f, 1.0f, L"assets/ground1.jpg");
 		// オブジェクト生成
-		gObjManager["BackGround"] = new BillboardObject();
+		gObjManager["BackGround"] = new NormalObject();
 		Model* pModel = gObjManager["BackGround"]->GetModel();
 		pModel->SetModelData(gModelManager["BackGround"]);
-		pModel->SetScale(1.0f);
+		pModel->SetScale(100.0f);
 		pModel->mPos.x = -100.0f;
 		pModel->mPos.y = 1.0f;
-		pModel->mPos.z = 0.8f;
+		pModel->mPos.z = 500.0f;
 		pModel->mCamera = gpCamera;
 	}
 
@@ -372,6 +377,7 @@ void GameScene::Update()
 
 				// スコア増加？
 				mData.KILL_ENEMY++;	// 倒した敵の数を増加
+				this->nowCombo++;	// コンボを増加
 
 				 delete gEnemyManager[i];
 				 gEnemyManager.erase(gEnemyManager.begin() + i);
@@ -380,12 +386,19 @@ void GameScene::Update()
 			else
 			{
 				// プレイヤーのスコアとか減らす？
+
+				// コンボを0に戻す
+				if (nowCombo > maxCombo) maxCombo = nowCombo;
+				this->nowCombo = 0;
 			}
 		}
 		// プレイヤーと敵が接触しておらず
 		// 敵がプレイヤーの後ろに行ったら消す
 		else if (CheckEnemy(gEnemyManager[i]))
 		{
+			if (nowCombo > maxCombo) maxCombo = nowCombo;
+			this->nowCombo = 0;
+
 			delete gEnemyManager[i];
 			gEnemyManager.erase(gEnemyManager.begin() + i);
 		}
@@ -402,6 +415,12 @@ void GameScene::Update()
 
 	// カメラの更新処理（ビュー変換行列計算）
 	gpCamera->Update();
+
+	// プレイヤーが地面についたときの処理
+	if (gObjManager["Player"]->GetModel()->mPos.z > 500.0f)
+	{
+
+	}
 
 	// フレーム数加算
 	frameCount++;

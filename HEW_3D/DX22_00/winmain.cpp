@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include "input.h"
 #include "winmain.h"
+#include "FrameControl.h"
 
 #include "SceneManager.h"
 
@@ -63,6 +64,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	SceneManager* sceneManager = new SceneManager();
 	sceneManager->ChangeScene(SceneManager::GAME);
 
+	// フレームコントローラー生成
+	FrameControl* frameCnt = new FrameControl();
+
 	MSG msg;
 	// メインループ
 	for (;;) {
@@ -94,6 +98,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 			sceneManager->Draw();
 
 			Input_Refresh(); // キー状態の更新
+
+			// フレーム制御
+			frameCnt->ControlFrame();
 		}
 	}
 	// Direct3Dの解放関数を呼び出す

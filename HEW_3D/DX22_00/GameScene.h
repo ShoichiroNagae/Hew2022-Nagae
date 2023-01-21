@@ -52,6 +52,8 @@ private:
 	ObjModelLoader loader;	// モデルのローダー
 	int frameCount;		// フレームカウント
 	float playerSpeed;	// スピード一時保存用
+	int nowCombo;	// 現在のコンボ数
+	int maxCombo;	// 最大コンボ数
 
 	// モデルマネージャー
 	// 名前で格納する 呼び出すときはstring型
