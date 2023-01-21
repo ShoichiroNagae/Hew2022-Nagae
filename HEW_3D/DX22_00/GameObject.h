@@ -30,6 +30,9 @@ public:
 	// 移動速度
 	float mSpeed;
 
+	// アクティブフラグ
+	float mActive;
+
 protected:
 	// このクラスで表示させるモデル
 	Model* mModel;

@@ -15,6 +15,8 @@ constexpr auto MAX_GROUND = (100);
 #define ENEMY_MAX_XPOS	(3.0f);		// 最大値(右端)
 #define ENEMY_SPEED_DEF (0.001f);	// スピード　初期値
 
+#define GROUND_POS	(400.0f)
+
 class GameScene : public BaseScene
 {
 public:
@@ -48,12 +50,13 @@ public:
 protected:
 
 private:
-	Camera* gpCamera; // カメラ
-	ObjModelLoader loader;	// モデルのローダー
-	int frameCount;		// フレームカウント
-	float playerSpeed;	// スピード一時保存用
-	int nowCombo;	// 現在のコンボ数
-	int maxCombo;	// 最大コンボ数
+	Camera*				gpCamera;			// カメラ
+	ObjModelLoader		loader;				// モデルのローダー
+
+	int					frameCount;			// フレームカウント
+	int					nowCombo;			// 現在のコンボ数
+	int					maxCombo;			// 最大コンボ数
+	bool				playerLanded;		// プレイヤーが地面についたかどうか
 
 	// モデルマネージャー
 	// 名前で格納する 呼び出すときはstring型

@@ -75,9 +75,13 @@ void GameScene::ObjectCreate(std::string objName, float mScale, float mx, float 
 	pModel->mCamera = gpCamera;
 }
 
+
+
 // 敵の自動生成
 void GameScene::CreateEnemy()
 {
+	if (playerLanded) return;
+
 	int min = ENEMY_MIN_XPOS;
 	int max = ENEMY_MAX_XPOS;
 	std::random_device rnd;									// 非決定的な乱数生成器を生成
@@ -91,16 +95,19 @@ void GameScene::CreateEnemy()
 	EnemyPosX += (randDecimal(mt) * 0.01f);
 	float EnemyPosY = randY(mt);
 
+	Model* pPlayerModel = gObjManager["Player"]->GetModel();
+	float EnemyPosZ = pPlayerModel->mPos.z + 50.0f;
+	if (EnemyPosZ > GROUND_POS) EnemyPosZ = GROUND_POS - 50.0f;
+
 	// 敵を生成
 	GameObject* tmp = new NormalObject();
 	Model* pEnemyModel = tmp->GetModel();
-	Model* pPlayerModel = gObjManager["Player"]->GetModel();
 	HitSphere* pHit = tmp->GetHit();
 
 	tmp->mSpeed = -ENEMY_SPEED_DEF;
 	pEnemyModel->SetModelData(gModelManager["Enemy"]);
 	pEnemyModel->SetScale(1.0f);
-	pEnemyModel->mPos.z = pPlayerModel->mPos.z + 50.0f;
+	pEnemyModel->mPos.z = EnemyPosZ;
 	pEnemyModel->mPos.x = EnemyPosX;
 	pEnemyModel->mPos.y = EnemyPosY;
 	pEnemyModel->mRotate.y = 90.0f;
@@ -159,7 +166,7 @@ void GameScene::Init()
 	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/Enemy.png");		// 敵
 	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");		// 背景
 
-	ModelLoad(loader, "clearLogo", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/clearlogo.png");	// プレイヤー
+	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");	// プレイヤー
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["Player"] = new BillboardObject();
@@ -173,12 +180,21 @@ void GameScene::Init()
 	gObjManager["Player"]->mSpeed = 0.005f;
 
 	// クリアロゴ生成
-	gObjManager["clearlogo"] = new NormalObject();
-	ObjectCreate("Player", 1.5f, 0.0f, 1.0f, 0.0f);
-	pModel->mRotate.y = 90.0f;	// プレイヤーをZ軸方向に向ける
+	gObjManager["clearLogo"] = new NormalObject();
+	ObjectCreate("clearLogo", 1.0f, 0.0f, 0.0f, 0.0f);
+	pModel = gObjManager["clearLogo"]->GetModel();
 	pModel->mCamera = gpCamera;
 	pModel->m2dRender = true;
 	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
+	gObjManager["clearLogo"]->mActive = false;
+
+	//gModelManager["title"] = CreateSquarePolygon(1.0f, 0.7f, 1.0f, 1.0f, L"assets/TitleLogo640.png");
+	//tmp = new NormalObject();
+	//pModel = tmp->GetModel();
+	//pModel->SetModelData(gModelManager["title"]);
+	//pModel->Set2dRender(true);
+	//pModel->SetDiffuse(XMFLOAT4(1, 1, 1, 0.5f));
+	//gObjectList.emplace_back(tmp);
 
 	// 地面を生成
 	pModel = nullptr;
@@ -298,6 +314,7 @@ void GameScene::Init()
 
 	// メンバ変数初期化
 	frameCount = 0;
+	playerLanded = false;
 
 	// 追従カメラが追従する対象を設定
 	((BackCamera*)gpCamera)->SetTarget(gObjManager["Player"]);
@@ -327,14 +344,8 @@ void GameScene::Update()
 	MoveLimit();
 
 	// 加速・減速
-	if (Input_GetKeyDown('R'))
-	{
-		gObjManager["Player"]->mSpeed += 0.0001f;
-	}
-	if (Input_GetKeyDown('F'))
-	{
-		gObjManager["Player"]->mSpeed -= 0.0001f;
-	}
+	if (Input_GetKeyDown('R')) gObjManager["Player"]->mSpeed += 0.0001f;
+	if (Input_GetKeyDown('F')) gObjManager["Player"]->mSpeed -= 0.0001f;
 
 	// 敵の自動生成
 	if (frameCount == 50) CreateEnemy();
@@ -353,7 +364,7 @@ void GameScene::Update()
 		pModel->mCamera = gpCamera;
 	}
 
-	// ゲームオブジェクトを描画
+	// ゲームオブジェクトを更新
 	for (auto i = gObjManager.begin();
 		i != gObjManager.end();
 		i++)
@@ -417,9 +428,16 @@ void GameScene::Update()
 	gpCamera->Update();
 
 	// プレイヤーが地面についたときの処理
-	if (gObjManager["Player"]->GetModel()->mPos.z > 500.0f)
+	if (gObjManager["Player"]->GetModel()->mPos.z > GROUND_POS)
 	{
+		// プレイヤーの移動を止める
+		gObjManager["Player"]->mSpeed = 0.0f;
+		playerLanded = true;
 
+		// クリアロゴを表示
+		gObjManager["clearLogo"]->mActive = true;
+
+		// クリアロゴ表示から何秒後かにリザルトシーンへ遷移
 	}
 
 	// フレーム数加算
@@ -449,7 +467,6 @@ void GameScene::Draw()
 	// 地面を全て描画
 	for (int i = 0; i < gGround.size(); i++)
 		gGround[i]->Draw();
-
 
 	// 敵を全て描画
 	for (int i = 0; i < gEnemyManager.size(); i++)

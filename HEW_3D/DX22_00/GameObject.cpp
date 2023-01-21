@@ -8,6 +8,7 @@ GameObject::GameObject()
 {
 	mModel = nullptr;
 	mSpeed = 0.0f;
+	mActive = true;
 	mHit = nullptr;
 }
 
@@ -19,7 +20,7 @@ GameObject::~GameObject()
 
 void GameObject::Draw()
 {
-	mModel->Draw();
+	if (this->mActive)	mModel->Draw();
 }
 
 void GameObject::Update()
