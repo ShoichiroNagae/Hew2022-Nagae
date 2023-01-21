@@ -130,7 +130,7 @@ void Model::GetWVPRMatrix(ConstBufferData& out)
 		// 2: アスペクト比　→　基本、ウインドウサイズの縦横比を書けばよい
 		// 3: near 見える範囲の一番手前の視点からの距離
 		// 4: far  見える範囲の一番奥の視点からの距離
-		mxProjection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
+		mxProjection = XMMatrixPerspectiveFovLH(XMConvertToRadians(45.0f), 16.0f / 9.0f, 0.1f, 500.0f);
 	}
 
 	// 定数バッファの転送用構造体にコピー　※この際、行列は転置行列にする

@@ -7,9 +7,11 @@
 #include "Input.h"
 #include "Camera.h"
 #include "Model.h"
+#include "SceneManager.h"
 
 #include "CreateSquarePolygon.h"
 
+RESULT_DATA BaseScene::mData;
 extern ID3D11Buffer* gpConstBuffer; //定数バッファ
 
 // コンストラクタ
@@ -73,6 +75,79 @@ void GameScene::ObjectCreate(std::string objName, float mScale, float mx, float 
 	pModel->mCamera = gpCamera;
 }
 
+
+
+// 敵の自動生成
+void GameScene::CreateEnemy()
+{
+	if (playerLanded) return;
+
+	int min = ENEMY_MIN_XPOS;
+	int max = ENEMY_MAX_XPOS;
+	std::random_device rnd;									// 非決定的な乱数生成器を生成
+	std::mt19937 mt(rnd());									//  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
+	std::uniform_int_distribution<> randDecimal(0, 99);		// [0, 99] 範囲の乱数			小数部
+	std::uniform_int_distribution<> randInteger(min, max);	// プレイヤーに見える範囲の乱数	整数部
+	std::uniform_int_distribution<> randY(1, 7);	// Y軸用乱数	整数部
+
+	// 敵の位置をランダムで決定
+	float EnemyPosX = randInteger(mt);
+	EnemyPosX += (randDecimal(mt) * 0.01f);
+	float EnemyPosY = randY(mt);
+
+	Model* pPlayerModel = gObjManager["Player"]->GetModel();
+	float EnemyPosZ = pPlayerModel->mPos.z + 50.0f;
+	if (EnemyPosZ > GROUND_POS) EnemyPosZ = GROUND_POS - 50.0f;
+
+	// 敵を生成
+	GameObject* tmp = new NormalObject();
+	Model* pEnemyModel = tmp->GetModel();
+	HitSphere* pHit = tmp->GetHit();
+
+	tmp->mSpeed = -ENEMY_SPEED_DEF;
+	pEnemyModel->SetModelData(gModelManager["Enemy"]);
+	pEnemyModel->SetScale(1.0f);
+	pEnemyModel->mPos.z = EnemyPosZ;
+	pEnemyModel->mPos.x = EnemyPosX;
+	pEnemyModel->mPos.y = EnemyPosY;
+	pEnemyModel->mRotate.y = 90.0f;
+	pHit->SetHankei(1.0f);
+	pEnemyModel->mCamera = gpCamera;
+	gEnemyManager.emplace_back(tmp);
+}
+
+bool GameScene::CheckEnemy(GameObject* _enemy)
+{
+	Model* Enemy = _enemy->GetModel();
+	bool isEnemyBack = false;
+
+	// 敵がプレイヤーよりも後ろにいる
+	if (Enemy->mPos.z < gpCamera->mEye.z) isEnemyBack = true;
+
+	return isEnemyBack;
+}
+
+void GameScene::MoveLimit()
+{
+	// プレイヤーの座標を取得
+	Model* pModel = gObjManager["Player"]->GetModel();
+	float& x = pModel->mPos.x;
+	float& y = pModel->mPos.y;
+	float& z = pModel->mPos.z;
+
+	// プレイヤー移動限界値を設定
+	const float xMax = 5.5f;
+	const float xMin = -5.5f;
+	const float yMax = 7.5f;
+	const float yMin = 0.5f;
+
+	// 制限
+	if (x >= xMax) x = xMax;
+	if (x <= xMin) x = xMin;
+	if (y >= yMax) y = yMax;
+	if (y <= yMin) y = yMin;
+}
+
 // 初期化
 void GameScene::Init()
 {	
@@ -84,39 +159,165 @@ void GameScene::Init()
 	Camera::mMainCamera = gpCamera;
 	CameraInit(gpCamera);
 
+
 	// モデル読み込み
-	ModelLoad(loader, "ground1", "assets/ground1.obj", L"assets/ground1.jpg");
-	ModelLoad(loader, "gun", "assets/gun.obj", L"assets/gun.png");
-	ModelLoad(loader, "cottage", "assets/cottage.obj", L"assets/cottage.png");
-	ModelLoad(loader, "shot", "assets/billboard.obj", L"assets/shot.png");
-	ModelLoad(loader, "2Dchar", 1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
+	ModelLoad(loader, "ground1", "assets/Game/ground1.obj", L"assets/Game/ground1.jpg");	// 地面
+	ModelLoad(loader, "Player", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/char01.png");		// プレイヤー
+	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/Enemy.png");		// 敵
+	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");		// 背景
 
-	// コテージ用Modelオブジェクト生成
-	gObjManager["cottage"] = new NormalObject();
-	ObjectCreate("cottage", 0.001f, -10.0f, -1.0f, 0.0f);
-
-	// 銃用Modelオブジェクト生成
-	gObjManager["gun"] = new NormalObject();
-	ObjectCreate("gun", 1.5f, 0.0f, 1.0f, 0.0f);
+	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");	// プレイヤー
 
 	// 2Dキャラオブジェクト生成
-	gObjManager["2Dchar"] = new BillboardObject();
-	ObjectCreate("2Dchar", 1.0f, -10.0f, 1.0f, 0.8f);
+	gObjManager["Player"] = new BillboardObject();
+	ObjectCreate("Player", 1.5f, 0.0f, 1.0f, 0.0f);
+	Model* pModel = gObjManager["Player"]->GetModel();
+	pModel->mRotate.y = 90.0f;	// プレイヤーをZ軸方向に向ける
+	pModel->mCamera = gpCamera;
+	pModel->mPos.y = 3.0f;
+	HitSphere* pHit = gObjManager["Player"]->GetHit();                                                                                                            
+	pHit->SetHankei(1.0f);
+	gObjManager["Player"]->mSpeed = 0.005f;
+
+	// クリアロゴ生成
+	gObjManager["clearLogo"] = new NormalObject();
+	ObjectCreate("clearLogo", 1.0f, 0.0f, 0.0f, 0.0f);
+	pModel = gObjManager["clearLogo"]->GetModel();
+	pModel->mCamera = gpCamera;
+	pModel->m2dRender = true;
+	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
+	gObjManager["clearLogo"]->mActive = false;
+
+	//gModelManager["title"] = CreateSquarePolygon(1.0f, 0.7f, 1.0f, 1.0f, L"assets/TitleLogo640.png");
+	//tmp = new NormalObject();
+	//pModel = tmp->GetModel();
+	//pModel->SetModelData(gModelManager["title"]);
+	//pModel->Set2dRender(true);
+	//pModel->SetDiffuse(XMFLOAT4(1, 1, 1, 0.5f));
+	//gObjectList.emplace_back(tmp);
 
 	// 地面を生成
-	for (int i = 0; i < MAX_GROUND; i++){
-		for (int j = 0; j < MAX_GROUND; j++){
-			gpGround[i][j] = new NormalObject();
-			Model* pGroundModel = gpGround[i][j]->GetModel();
-			pGroundModel->SetModelData(gModelManager["ground1"]);
-			pGroundModel->SetScale(1.0f);
-			pGroundModel->Setpos(-10.0f + 2.0f * j, -2.0f, -10.0f + 2.0f * i);
-			pGroundModel->mCamera = gpCamera;
-		}
+	pModel = nullptr;
+	// 下側
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		GameObject* tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = -4.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = -2.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 0.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = -2.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 4.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = -2.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
 	}
+	// 上側
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		GameObject* tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = -4.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 10.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 0.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 10.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 4.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 10.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+	}
+	// 右側
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		GameObject* tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = -8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 2.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = -8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 6.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+	}
+	// 左側
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		GameObject* tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 2.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 6.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+	}
+		
+
+	// メンバ変数初期化
+	frameCount = 0;
+	playerLanded = false;
 
 	// 追従カメラが追従する対象を設定
-	((BackCamera*)gpCamera)->SetTarget(gObjManager["gun"]);
+	((BackCamera*)gpCamera)->SetTarget(gObjManager["Player"]);
 }
 
 void GameScene::Update()
@@ -132,84 +333,115 @@ void GameScene::Update()
 		gDeltaTime = 1;
 	}
 
-	// キャラクター移動
-	// →　キャラクターが向いている方向に進ませるには？
-	// →　無段階で移動できる
-	// →「前向きベクトル」を使う
-	gObjManager["gun"]->mSpeed = 0.0f;
-
-	// 銃の前進
-	gObjManager["gun"]->mSpeed = 0.001f;
-
 	// 主人公の移動
-	Model* pGunModel = gObjManager["gun"]->GetModel();
-	if (Input_GetKeyDown('W')) pGunModel->mPos.y += 0.001f;
-	if (Input_GetKeyDown('S')) pGunModel->mPos.y -= 0.001f;
-	if (Input_GetKeyDown('A')) pGunModel->mPos.z -= 0.001f;
-	if (Input_GetKeyDown('D')) pGunModel->mPos.z += 0.001f;
-	// 加速・減速
-	if (Input_GetKeyDown('R')) pGunModel->mPos.x -= 0.001f;
-	if (Input_GetKeyDown('F')) pGunModel->mPos.x += 0.001f;
+	Model* pPlayerModel = gObjManager["Player"]->GetModel();
+	if (Input_GetKeyDown('W')) pPlayerModel->mPos.y += 0.01f;
+	if (Input_GetKeyDown('S')) pPlayerModel->mPos.y -= 0.01f;
+	if (Input_GetKeyDown('A')) pPlayerModel->mPos.x -= 0.01f;
+	if (Input_GetKeyDown('D')) pPlayerModel->mPos.x += 0.01f;
+	
+	// プレイヤーの移動を制限
+	MoveLimit();
 
-	// 敵の自動生成(仮)
-	// 
-	if (Input_GetKeyDown('P')) {
-		ModelLoad(loader, "2Dchar2", 1.0f, 1.2f, 0.33f, 0.25f, L"assets/char01.png");
-		// 2Dキャラオブジェクト生成
-		gObjManager["2Dchar2"] = new BillboardObject();
-		Model*  pModel = gObjManager["2Dchar2"]->GetModel();
-		pModel->SetModelData(gModelManager["2Dchar2"]);
-		pModel->SetScale(1.0f);
-		pModel->mPos.x = -9.0f;
-		pModel->mPos.y = 1.0f;
-		pModel->mPos.z = 0.8f;
-		pModel->mCamera = gpCamera;
-	}
+	// 加速・減速
+	if (Input_GetKeyDown('R')) gObjManager["Player"]->mSpeed += 0.0001f;
+	if (Input_GetKeyDown('F')) gObjManager["Player"]->mSpeed -= 0.0001f;
+
+	// 敵の自動生成
+	if (frameCount == 50) CreateEnemy();
+	if (frameCount > 50) frameCount = 0;
 
 	// 背景テスト
-	if (Input_GetKeyDown('L')) {
-		ModelLoad(loader, "BackGround", 1000.0f, 1000.0f, 1.0f, 1.0f, L"assets/ground1.jpg");
+	if (Input_GetKeyTrigger('L')) {
 		// オブジェクト生成
-		gObjManager["BackGround"] = new BillboardObject();
+		gObjManager["BackGround"] = new NormalObject();
 		Model* pModel = gObjManager["BackGround"]->GetModel();
 		pModel->SetModelData(gModelManager["BackGround"]);
-		pModel->SetScale(1.0f);
+		pModel->SetScale(100.0f);
 		pModel->mPos.x = -100.0f;
 		pModel->mPos.y = 1.0f;
-		pModel->mPos.z = 0.8f;
+		pModel->mPos.z = 500.0f;
 		pModel->mCamera = gpCamera;
 	}
 
-// ************************************************************* 
-	// アニメーション切り替わりテスト
-	// gObjManagerから別のobjectに切り替える
-	// 
-	//// 条件変更
-	//BillboardModel* p2DcharModel = gObjManager["2Dchar"]->GetModel();
-
-	/*if (Input_GetKeyDown(VK_SPACE))
-		p2DcharModel->ChangeTexData(L"assets/ground1.jpg");*/
-// **************************************************************	
-
-	// ゲームオブジェクトを描画
+	// ゲームオブジェクトを更新
 	for (auto i = gObjManager.begin();
 		i != gObjManager.end();
 		i++)
 		i->second->Update();
+
+	// 敵を全て更新
+	for (int i = 0; i < gEnemyManager.size(); i++)
+	{
+		GameObject* tmp = gEnemyManager[i];
+		HitSphere* tmpHit = tmp->GetHit();
+
+		tmp->Update();
+
+		// 当たり判定を実行
+		if (tmpHit->IsHit(gObjManager["Player"]->GetHit()))
+		{
+			// 当たっているときにボタン入力があったら敵を消す
+			if (Input_GetKeyTrigger(VK_SPACE))
+			{
+				// プレイヤーの切るアニメーションとか実行？
+
+				// スコア増加？
+				mData.KILL_ENEMY++;	// 倒した敵の数を増加
+				this->nowCombo++;	// コンボを増加
+
+				 delete gEnemyManager[i];
+				 gEnemyManager.erase(gEnemyManager.begin() + i);
+			}
+			// 敵に当ってしまったとき
+			else
+			{
+				// プレイヤーのスコアとか減らす？
+
+				// コンボを0に戻す
+				if (nowCombo > maxCombo) maxCombo = nowCombo;
+				this->nowCombo = 0;
+			}
+		}
+		// プレイヤーと敵が接触しておらず
+		// 敵がプレイヤーの後ろに行ったら消す
+		else if (CheckEnemy(gEnemyManager[i]))
+		{
+			if (nowCombo > maxCombo) maxCombo = nowCombo;
+			this->nowCombo = 0;
+
+			delete gEnemyManager[i];
+			gEnemyManager.erase(gEnemyManager.begin() + i);
+		}
+	}
+	
 
 	// 弾管理配列の中身をすべて更新する
 	for (int i = 0; i < gShotManager.size(); i++)
 		gShotManager[i]->Update();
 
 	// 地面を全て更新
-	for (int i = 0; i < MAX_GROUND; i++){
-		for (int j = 0; j < MAX_GROUND; j++){
-			gpGround[i][j]->Update();
-		}
-	}
+	for (int i = 0; i < gGround.size(); i++)
+		gGround[i]->Update();
 
 	// カメラの更新処理（ビュー変換行列計算）
 	gpCamera->Update();
+
+	// プレイヤーが地面についたときの処理
+	if (gObjManager["Player"]->GetModel()->mPos.z > GROUND_POS)
+	{
+		// プレイヤーの移動を止める
+		gObjManager["Player"]->mSpeed = 0.0f;
+		playerLanded = true;
+
+		// クリアロゴを表示
+		gObjManager["clearLogo"]->mActive = true;
+
+		// クリアロゴ表示から何秒後かにリザルトシーンへ遷移
+	}
+
+	// フレーム数加算
+	frameCount++;
 }
 
 void GameScene::Draw()
@@ -231,11 +463,14 @@ void GameScene::Draw()
 		0);				// ステンシルバッファを0でクリアする
 
 	// ↓　自前の描画処理をここに書く *******
-	for (int i = 0; i < MAX_GROUND; i++){
-		for (int j = 0; j < MAX_GROUND; j++){
-			gpGround[i][j]->Draw();
-		}
-	}
+
+	// 地面を全て描画
+	for (int i = 0; i < gGround.size(); i++)
+		gGround[i]->Draw();
+
+	// 敵を全て描画
+	for (int i = 0; i < gEnemyManager.size(); i++)
+		gEnemyManager[i]->Draw();
 
 	// ゲームオブジェクトを描画
 	for (auto i = gObjManager.begin();
@@ -254,15 +489,9 @@ void GameScene::Draw()
 // 解放
 void GameScene::Release()
 {
-	// 弾管理配列の中身をすべて削除する
-
-
-	// 地面の要s素をすべて削除する
-	for (int i = 0; i < MAX_GROUND; i++) {
-		for (int j = 0; j < MAX_GROUND; j++) {
-			delete gpGround[i][j];
-		}
-	}
+	// 地面を全て描画
+	for (int i = 0; i < gGround.size(); i++)
+		delete gGround[i];
 
 	COM_SAFE_RELEASE(gpConstBuffer);
 
@@ -289,6 +518,10 @@ void GameScene::Release()
 	}
 	// 連想配列の要素を全削除
 	gObjManager.clear();
+
+	// 敵マネージャーの要素を全て開放
+	for (int i = 0; i < gEnemyManager.size(); i++)
+		delete gEnemyManager[i];
 }
 
 // デストラクタ

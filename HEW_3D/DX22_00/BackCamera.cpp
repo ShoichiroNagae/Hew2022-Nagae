@@ -21,7 +21,7 @@ void BackCamera::Update()
 	// 緩やかカメラの処理
 	// 1フレーム前のカメラ位置を保存する変数
 	static XMFLOAT3 lastCamEye;
-	float blendFactor = 0.997f;
+	float blendFactor = 0.990f;
 	camEye.x = lastCamEye.x * blendFactor
 		+ camEye.x * (1.0f - blendFactor);
 	camEye.y = lastCamEye.y * blendFactor

@@ -1,5 +1,8 @@
-﻿  compilation header save succeeded; see C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\ps.h
-  Direct3D.cpp
-  TitleScene.cpp
+﻿  GameScene.cpp
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(85,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(86,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(94,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(96,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+  SceneManager.cpp
   コードを生成中...
   DX22_00.vcxproj -> C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
