@@ -42,6 +42,10 @@ public:
 	void ModelLoad(ObjModelLoader oml,std::string ModelName,
 		float width, float height, float uvWidth, float uvHeight,const wchar_t* pTexFileName);
 	
+	//// ビルボードアニメーション関係系用ローダー　　作成::井戸上
+	//void ModelLoad(ObjModelLoader oml, std::string ModelName,
+	//	DirectX::XMFLOAT4 Set_whuv, const wchar_t* pTexFileName);
+
 	// オブジェクト生成
 	// 1.オブジェクト名 2.倍率 3,4,5 x,y,z座標
 	void ObjectCreate(std::string objName,

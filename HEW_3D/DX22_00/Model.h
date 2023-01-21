@@ -81,5 +81,25 @@ protected:
 	// ワールド，ビュー，プロジェクション，回転行列を作成して
 	// outにセットする
 	virtual void GetWVPRMatrix(ConstBufferData& out);
+	
+// 追加機能（アニメーション）
+public:
+	// アニメーションの分割数情報をセット(Init時設定でお願いします)
+	void SetUVSplit(DirectX::XMFLOAT4 mSetUV);
+
+	// アニメーション処理込み
+	void AnimationUpdate(int setState, int* setFlame); // 状態変数enum 、対応するフレーム
+
+	// 描画のみ（固定座標で表示する際にも仕様）
+	void SetUVAnimation(int mState, int idxNowFlame); // 変数:アニメーションUVの方向, 対応するフレームの添え字
+
+	float mAnimSpeed = 0.004f; // アニメ再生速度(シーン.cppで変更可能)
+
+private:
+	// アニメーションの分割数データ
+	DirectX::XMFLOAT4 mUVSplit = DirectX::XMFLOAT4(0.00f, 0.00f, 0.00f, 0.00f);
+	float mAnimTime = 0.000f; // アニメーションの添え字用（時間をカウントする）
+	float uvWidth = 0.0f;  // キャラクター１コマのUの幅
+	float uvHeight = 0.0f; // キャラクター１コマのVの高さ
 };
 
