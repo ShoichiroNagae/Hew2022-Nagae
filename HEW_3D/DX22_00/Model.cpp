@@ -5,7 +5,7 @@
 ID3D11Buffer* gpConstBuffer;
 
 using namespace DirectX; // "DirectX"namespaceを今後省略する
-extern DWORD gDeltaTime;
+extern DWORD gDeltaTime; // アニメーションで使う
 
 void Model::Draw()
 {
@@ -146,7 +146,24 @@ void Model::SetUVSplit(DirectX::XMFLOAT4 mSetUV)
 	mUVSplit = mSetUV;
 }
 
-void Model::SlideAnimation(int mState, int mNowFlame)
+void Model::AnimationUpdate(int setState, int* setFlame)// アニメーション処理
+{
+	// アニメーションの時間をカウント
+	mAnimTime += mAnimSpeed * gDeltaTime;
+
+	int nowFlame = (int)mAnimTime;// 現在のフレーム
+
+	if (setFlame[nowFlame] == -1)// アニメーションが最後まで行くとreset
+	{
+		mAnimTime = 0.0f;
+		nowFlame = 0;
+	}
+
+	SetUVAnimation(setState, setFlame[nowFlame]);
+
+}
+
+void Model::SetUVAnimation(int mState, int mNowFlame)
 {
 	if (mUVSplit.z == 0.00f || mUVSplit.w == 0.00f)
 	{

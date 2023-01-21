@@ -55,8 +55,11 @@ public:
 	// アニメーションの分割数情報をセット(Init時設定でお願いします)
 	void SetUVSplit(DirectX::XMFLOAT4 mSetUV);
 
-	// 変数:アニメーションUVの方向, 
-	void SlideAnimation(int mState, int mNowFlame);
+	// アニメーション処理込み
+	void AnimationUpdate(int setState, int* setFlame); // 状態変数enum 、対応するフレーム
+
+	// 描画のみ（固定座標で表示する際にも仕様）
+	void SetUVAnimation(int mState, int idxNowFlame); // 変数:アニメーションUVの方向, 対応するフレームの添え字
 
 	float mAnimTime = 0.000f; // アニメーションの添え字用（時間をカウントする）
 	float mAnimSpeed = 0.004f; // アニメ再生速度

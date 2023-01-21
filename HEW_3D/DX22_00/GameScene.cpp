@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "Model.h"
+
 #include "AnimationData.h"
 
 #include "CreateSquarePolygon.h"
@@ -170,7 +171,6 @@ void GameScene::Update()
 		pModel->mPos.y = 1.0f;
 		pModel->mPos.z = 0.8f;
 		pModel->mCamera = gpCamera;
-		// 	pModel->SetUVSplit(CHAR2DSize); アニメーション用UVのセット
 	}
 
 	// 背景テスト
@@ -193,19 +193,14 @@ void GameScene::Update()
 
 	//// if(状態変数)を用意してアニメーションの管理をする
 	//Model* p2DcharModel = gObjManager["2Dchar"]->GetModel();
-	//// アニメーションの時間をカウント
-	//p2DcharModel->mAnimTime += p2DcharModel->mAnimSpeed * gDeltaTime;
+	//p2DcharModel->SetUVSplit(CHAR2DSize); //アニメーション用UVのセット(入れないと動かない。Initで設定がおすすめ)
+	//// アニメーション処理
+	//p2DcharModel->AnimationUpdate(CHAR2DSTATE::BACK, Char2D_kihonFlame);
 
-	//int nowFlame = (int)p2DcharModel->mAnimTime;// 現在のフレーム
+	//// 固定表示
+	//p2DcharModel->SetUVAnimation(UP, Char2D_kihonFlame[0]);
 
-	//if (Char2D_kihonFlame[nowFlame] == -1)// アニメーションが最後まで行くとreset
-	//{
-	//	p2DcharModel->mAnimTime = 0.0f;
-	//	nowFlame = 0;
-	//}
-
-	//p2DcharModel->SlideAnimation(UP, Char2D_kihonFlame[nowFlame]);
-
+	//// テクスチャ変更
 	/*if (Input_GetKeyDown(VK_SPACE))
 		p2DcharModel->ChangeTexData(L"assets/ground1.jpg");*/
 // **************************************************************	
