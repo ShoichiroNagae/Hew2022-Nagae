@@ -5,6 +5,7 @@
 ID3D11Buffer* gpConstBuffer;
 
 using namespace DirectX; // "DirectX"namespaceを今後省略する
+extern DWORD gDeltaTime;
 
 void Model::Draw()
 {
@@ -138,4 +139,87 @@ void Model::GetWVPRMatrix(ConstBufferData& out)
 	out.view = XMMatrixTranspose(mxView);
 	out.projection = XMMatrixTranspose(mxProjection);
 	out.worldRotate = XMMatrixTranspose(mxRotate);
+}
+
+void Model::SetUVSplit(DirectX::XMFLOAT4 mSetUV)
+{
+	mUVSplit = mSetUV;
+}
+
+void Model::SlideAnimation(int mState, int mNowFlame)
+{
+	if (mUVSplit.z == 0.00f || mUVSplit.w == 0.00f)
+	{
+		// UV分割数がセットされていない不十分な時、処理を無視
+	}
+	else
+	{
+		uvWidth = mUVSplit.z;
+		uvHeight = mUVSplit.w;
+
+		float frameYoko = (float)mNowFlame; // テーブルから現在のコマを取得
+		float frameTate = (float)mState; // キャラの向きを縦コマ番号とする
+
+		float uLeft = frameYoko * uvWidth;
+		float uRight = uLeft + uvWidth;
+		float vTop = frameTate * uvHeight;
+		float vBottom = vTop + uvHeight;
+
+		// 位置を補正する
+		if (fabs(uRight - 1.01f) <= 0.01f || uRight > 1.00f)//右端
+		{
+			uRight = 1.0f;
+		}
+		if (fabs(uLeft - 0.01f) <= 0.01f || uLeft < 0.00f)// 左端
+		{
+			uLeft = 0.0f;
+		}
+		if (fabs(vBottom - 1.01f) <= 0.01f || vBottom > 1.00f)// 下端
+		{
+			vBottom = 1.0f;
+		}
+		if (fabs(vTop - 0.01f) <= 0.01f || vTop < 0.00f)// 上端
+		{
+			vTop = 0.0f;
+		}
+
+		// モデル頂点データ作成
+		const float w = mUVSplit.x / 2.0f;
+		const float h = mUVSplit.y / 2.0f;
+
+		ModelVertex vx[6];
+		vx[0] = { -w,  h, 0, 1, 1, 1, 1, uLeft, vTop };      // 左上
+		vx[1] = { w,  h, 0, 1, 1, 1, 1, uRight, vTop };    // 右上
+		vx[2] = { w, -h, 0, 1, 1, 1, 1, uRight, vBottom };// 右下
+
+		vx[3] = { w, -h, 0, 1, 1, 1, 1, uRight, vBottom };// 右下
+		vx[4] = { -w, -h, 0, 1, 1, 1, 1,uLeft, vBottom };   // 左下
+		vx[5] = { -w,  h, 0, 1, 1, 1, 1, uLeft, vTop };      // 左上
+		mModelData.mNumVertex = sizeof(vx) / sizeof(ModelVertex); // 頂点数を計算
+
+		// モデル用の頂点バッファ作成
+		D3D11_BUFFER_DESC bufferDesc;
+		bufferDesc.ByteWidth = sizeof(vx);
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bufferDesc.CPUAccessFlags = 0;
+		bufferDesc.MiscFlags = 0;
+		bufferDesc.StructureByteStride = 0;
+
+		// バッファの初期値指定
+		D3D11_SUBRESOURCE_DATA initialVertexData;
+		// 頂点バッファの初期値
+		initialVertexData.pSysMem = vx;
+		// 頂点バッファでは使用しない
+		initialVertexData.SysMemPitch = 0;
+		initialVertexData.SysMemSlicePitch = 0;
+
+		HRESULT hr = Direct3D_Get()->device->CreateBuffer(&bufferDesc, &initialVertexData, &mModelData.mVertexBuffer);
+
+		if (FAILED(hr))
+		{
+			throw hr;
+		}
+
+	}
 }
