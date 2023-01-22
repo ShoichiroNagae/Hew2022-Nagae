@@ -9,6 +9,7 @@
 #include "Model.h"
 #include "SceneManager.h"
 
+//#include "AnimationData.h"
 #include "CreateSquarePolygon.h"
 
 RESULT_DATA BaseScene::mData;
@@ -65,6 +66,16 @@ void GameScene::ModelLoad(ObjModelLoader oml,std::string ModelName,
 		width, height, uvWidth, uvHeight, pTexFileName
 	);
 }
+
+// // ビルボードアニメーション関係系用ローダー　　作成::井戸上
+//void GameScene::ModelLoad(ObjModelLoader oml, std::string ModelName,
+//	DirectX::XMFLOAT4 Set_whuv, const wchar_t* pTexFileName)
+//{
+//	oml = ObjModelLoader();
+//	gModelManager[ModelName] = oml.Load(
+//		Set_whuv.x, Set_whuv.y, Set_whuv.z, Set_whuv.w, pTexFileName
+//	);
+//}
 
 void GameScene::ObjectCreate(std::string objName, float mScale, float mx, float my, float mz)
 {
@@ -163,10 +174,11 @@ void GameScene::Init()
 	// モデル読み込み
 	ModelLoad(loader, "ground1", "assets/Game/ground1.obj", L"assets/Game/ground1.jpg");	// 地面
 	ModelLoad(loader, "Player", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/char01.png");		// プレイヤー
+	//ModelLoad(loader, "Player", Player2DSize, L"assets/Game/char01.png");		// プレイヤー(変更要望)
 	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/Enemy.png");		// 敵
 	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");		// 背景
 
-	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");	// プレイヤー
+	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");	// クリアロゴ
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["Player"] = new BillboardObject();
@@ -178,6 +190,7 @@ void GameScene::Init()
 	HitSphere* pHit = gObjManager["Player"]->GetHit();                                                                                                            
 	pHit->SetHankei(1.0f);
 	gObjManager["Player"]->mSpeed = 0.005f;
+	//pModel->SetUVSplit(Player2DSize); //アニメーション用UVのセット(入れないと動かない。)
 
 	// クリアロゴ生成
 	gObjManager["clearLogo"] = new NormalObject();
@@ -339,7 +352,21 @@ void GameScene::Update()
 	if (Input_GetKeyDown('S')) pPlayerModel->mPos.y -= 0.01f;
 	if (Input_GetKeyDown('A')) pPlayerModel->mPos.x -= 0.01f;
 	if (Input_GetKeyDown('D')) pPlayerModel->mPos.x += 0.01f;
-	
+// ************************************************************* 
+	//// アニメーション切り替わりテスト
+	//// gObjManagerから別のobjectに切り替える
+	//// if(状態変数)を用意してアニメーションの管理をする
+	//事前にアニメーション用UVのセット（SetUVSplit）を入れないと動かない。Initで設定)
+	//// アニメーション処理
+	//pPlayerModel->AnimationUpdate(PLAYER2DSTATE::BACK, Char2D_kihonFlame);
+
+	////// 固定表示
+	////pPlayerModel->SetUVAnimation(PLAYER2DSTATE::FRONT, Char2D_kihonFlame[0]);
+
+	////// テクスチャ変更
+	///*if (Input_GetKeyDown(VK_SPACE))
+	//	p2DcharModel->ChangeTexData(L"assets/ground1.jpg");*/
+// **************************************************************	
 	// プレイヤーの移動を制限
 	MoveLimit();
 
