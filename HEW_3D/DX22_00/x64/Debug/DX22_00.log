@@ -1,2 +1,13 @@
-﻿  ResultScene.cpp
+﻿  BaseScene.cpp
+  GameScene.cpp
+C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(96,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(97,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(105,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(107,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(527,30): warning C4805: '==': 演算中の 'float' 型と 'bool' 型の混用は安全ではありません
+  ResultScene.cpp
+  SceneManager.cpp
+  TitleScene.cpp
+  winmain.cpp
+  コードを生成中...
   DX22_00.vcxproj -> C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
