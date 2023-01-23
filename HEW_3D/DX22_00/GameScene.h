@@ -88,6 +88,8 @@ private:
 	bool CheckEnemy(GameObject* _enemy);
 	// プレイヤーの移動範囲を制限する
 	void MoveLimit();
+	// スタート
+	void ShowStart();
 	// 攻撃アニメーションか
 	int SetAnimState = 0;
 };

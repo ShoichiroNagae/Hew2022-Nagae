@@ -159,6 +159,14 @@ void GameScene::MoveLimit()
 	if (y <= yMin) y = yMin;
 }
 
+void GameScene::ShowStart()
+{
+	static int cout = 0;
+	if (frameCount > 40) cout++;
+
+	if (cout > 50) gObjManager["startLogo"]->mActive = false;
+}
+
 // 初期化
 void GameScene::Init()
 {	
@@ -179,11 +187,12 @@ void GameScene::Init()
 	ModelLoad(loader, "Enemy2", "assets/Game/billboard.obj", L"assets/Game/HewEnemy02.png");	// 敵
 	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");			// 背景
 
-	//ModelLoad(loader, "ground1", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver1.png");		// 建物_1
-	//ModelLoad(loader, "ground12", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver1_1.png");	// 建物_2
-	//ModelLoad(loader, "ground2", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver2.png");		// 建物_2
+	ModelLoad(loader, "ground1", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver1.png");		// 建物_1
+	ModelLoad(loader, "ground12", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver1_1.png");	// 建物_2
+	ModelLoad(loader, "ground2", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver2.png");		// 建物_2
 
 	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");		// クリアロゴ
+	ModelLoad(loader, "startLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/start.png");			// スタートロゴ
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["Player"] = new BillboardObject();
@@ -206,6 +215,14 @@ void GameScene::Init()
 	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
 	gObjManager["clearLogo"]->mActive = false;
 
+	// スタートロゴ生成
+	gObjManager["startLogo"] = new NormalObject();
+	ObjectCreate("startLogo", 1.0f, 0.0f, 0.0f, 0.0f);
+	pModel = gObjManager["startLogo"]->GetModel();
+	pModel->mCamera = gpCamera;
+	pModel->m2dRender = true;
+	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
+
 	//gModelManager["title"] = CreateSquarePolygon(1.0f, 0.7f, 1.0f, 1.0f, L"assets/TitleLogo640.png");
 	//tmp = new NormalObject();
 	//pModel = tmp->GetModel();
@@ -223,9 +240,21 @@ void GameScene::Init()
 		pModel = tmp->GetModel();
 		pModel->SetModelData(gModelManager["ground1"]);
 		pModel->SetScale(2.0f);
+		pModel->mPos.x = -8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = -2.0f;
+		pModel->mRotate.x = 90.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground12"]);
+		pModel->SetScale(2.0f);
 		pModel->mPos.x = -4.0f;
 		pModel->mPos.z = 4.0f * i;
 		pModel->mPos.y = -2.0f;
+		pModel->mRotate.x = 90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 
@@ -236,6 +265,18 @@ void GameScene::Init()
 		pModel->mPos.x = 0.0f;
 		pModel->mPos.z = 4.0f * i;
 		pModel->mPos.y = -2.0f;
+		pModel->mRotate.x = 90.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground12"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 4.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = -2.0f;
+		pModel->mRotate.x = 90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 
@@ -243,9 +284,10 @@ void GameScene::Init()
 		pModel = tmp->GetModel();
 		pModel->SetModelData(gModelManager["ground1"]);
 		pModel->SetScale(2.0f);
-		pModel->mPos.x = 4.0f;
+		pModel->mPos.x = 8.0f;
 		pModel->mPos.z = 4.0f * i;
 		pModel->mPos.y = -2.0f;
+		pModel->mRotate.x = 90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 	}
@@ -256,9 +298,21 @@ void GameScene::Init()
 		pModel = tmp->GetModel();
 		pModel->SetModelData(gModelManager["ground1"]);
 		pModel->SetScale(2.0f);
+		pModel->mPos.x = -8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 10.0f;
+		pModel->mRotate.x = -90.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetScale(2.0f);
 		pModel->mPos.x = -4.0f;
 		pModel->mPos.z = 4.0f * i;
 		pModel->mPos.y = 10.0f;
+		pModel->mRotate.x = -90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 
@@ -269,6 +323,7 @@ void GameScene::Init()
 		pModel->mPos.x = 0.0f;
 		pModel->mPos.z = 4.0f * i;
 		pModel->mPos.y = 10.0f;
+		pModel->mRotate.x = -90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 
@@ -279,19 +334,7 @@ void GameScene::Init()
 		pModel->mPos.x = 4.0f;
 		pModel->mPos.z = 4.0f * i;
 		pModel->mPos.y = 10.0f;
-		pModel->mCamera = gpCamera;
-		gGround.emplace_back(tmp);
-	}
-	// 右側
-	for (int i = 0; i < MAX_GROUND; i++)
-	{
-		GameObject* tmp = new NormalObject();
-		pModel = tmp->GetModel();
-		pModel->SetModelData(gModelManager["ground1"]);
-		pModel->SetScale(2.0f);
-		pModel->mPos.x = -8.0f;
-		pModel->mPos.z = 4.0f * i;
-		pModel->mPos.y = 2.0f;
+		pModel->mRotate.x = -90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 
@@ -299,9 +342,10 @@ void GameScene::Init()
 		pModel = tmp->GetModel();
 		pModel->SetModelData(gModelManager["ground1"]);
 		pModel->SetScale(2.0f);
-		pModel->mPos.x = -8.0f;
+		pModel->mPos.x = 8.0f;
 		pModel->mPos.z = 4.0f * i;
-		pModel->mPos.y = 6.0f;
+		pModel->mPos.y = 10.0f;
+		pModel->mRotate.x = -90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 	}
@@ -310,21 +354,70 @@ void GameScene::Init()
 	{
 		GameObject* tmp = new NormalObject();
 		pModel = tmp->GetModel();
-		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetModelData(gModelManager["ground2"]);
 		pModel->SetScale(2.0f);
-		pModel->mPos.x = 8.0f;
+		pModel->mPos.x = -8.0f;
 		pModel->mPos.z = 4.0f * i;
-		pModel->mPos.y = 2.0f;
+		pModel->mPos.y = 0.0f;
+		pModel->mRotate.y = -90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 
 		tmp = new NormalObject();
 		pModel = tmp->GetModel();
-		pModel->SetModelData(gModelManager["ground1"]);
+		pModel->SetModelData(gModelManager["ground2"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = -8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 4.0f;
+		pModel->mRotate.y = -90.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground2"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = -8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 8.0f;
+		pModel->mRotate.y = -90.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+	}
+	// 右側
+	for (int i = 0; i < MAX_GROUND; i++)
+	{
+		GameObject* tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground2"]);
 		pModel->SetScale(2.0f);
 		pModel->mPos.x = 8.0f;
 		pModel->mPos.z = 4.0f * i;
-		pModel->mPos.y = 6.0f;
+		pModel->mPos.y = 0.0f;
+		pModel->mRotate.y = 90.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground2"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 4.0f;
+		pModel->mRotate.y = 90.0f;
+		pModel->mCamera = gpCamera;
+		gGround.emplace_back(tmp);
+
+		tmp = new NormalObject();
+		pModel = tmp->GetModel();
+		pModel->SetModelData(gModelManager["ground2"]);
+		pModel->SetScale(2.0f);
+		pModel->mPos.x = 8.0f;
+		pModel->mPos.z = 4.0f * i;
+		pModel->mPos.y = 8.0f;
+		pModel->mRotate.y = 90.0f;
 		pModel->mCamera = gpCamera;
 		gGround.emplace_back(tmp);
 	}
@@ -532,6 +625,8 @@ void GameScene::Update()
 	if (frameCountChange >= 600) {
 		SceneManager::ChangeScene(SceneManager::RESULT);
 	}
+
+	ShowStart();
 
 }
 

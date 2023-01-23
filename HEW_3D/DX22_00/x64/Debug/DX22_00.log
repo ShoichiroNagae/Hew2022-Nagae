@@ -1,2 +1,34 @@
-﻿  ResultScene.cpp
-  DX22_00.vcxproj -> C:\Users\bomuh\Desktop\FileSource\GitHub\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
+﻿  compilation header save succeeded; see C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\ps.h
+  compilation header save succeeded; see C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\vs.h
+  BackCamera.cpp
+  BaseScene.cpp
+  BillboardModel.cpp
+  BillboardObject.cpp
+  Camera.cpp
+  Direct3D.cpp
+  FrameControl.cpp
+  GameObject.cpp
+  GameScene.cpp
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(96,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(97,10): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(105,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(107,18): warning C4244: '初期化中': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\DX22_00\GameScene.cpp(620,30): warning C4805: '==': 演算中の 'float' 型と 'bool' 型の混用は安全ではありません
+  HitLine.cpp
+  HitSphere.cpp
+  Input.cpp
+  Model.cpp
+  NormalObject.cpp
+  ObjModelLoader.cpp
+  myPolygon.cpp
+  ResultScene.cpp
+  SceneManager.cpp
+  Sprite.cpp
+  TitleScene.cpp
+  コードを生成中...
+  コンパイル中...
+  UnifyVec.cpp
+  WICTextureLoader.cpp
+  winmain.cpp
+  コードを生成中...
+  DX22_00.vcxproj -> C:\Users\shuhe\Desktop\HEW_SOPHOMORE\Hew2022-Nagae\HEW_3D\x64\Debug\DX22_00.exe
