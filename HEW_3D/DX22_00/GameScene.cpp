@@ -371,17 +371,13 @@ void GameScene::Update()
 			SetAnimState = PLAYER2DSTATE::ATTACK;
 			pPlayerModel->mAnimTime = 0.0f;
 			pPlayerModel->mAnimSpeed = 0.01f;
+			pPlayerModel->Loop = false;
 		}
-
 		break;
 
 	case ATTACK:
 		pPlayerModel->AnimationUpdate(PLAYER2DSTATE::ATTACK, Char2D_AttackFlame);
-		if (pPlayerModel->nowFlame = 0)// 攻撃アニメーションが最後まで行くとフラグOFF
-		{
-			
-		}
-		else
+		if (pPlayerModel->Loop == true)// 攻撃アニメーションが最後まで行くとフラグOFF
 		{
 			SetAnimState = PLAYER2DSTATE::DEFAULT;
 			pPlayerModel->mAnimTime = 0.0f;
