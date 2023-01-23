@@ -96,7 +96,7 @@ void ResultScene::Draw()
 		gObjManager["quitButton"]->Draw();
 	}
 
-	gObjManager["Result"]->Draw();
+	//gObjManager["Result"]->Draw();
 
 	// ゲームオブジェクトを更新
 	for (auto i = gObjManager.begin();
@@ -149,11 +149,15 @@ void ResultScene::Init()
 
 	// スタートボタン読み込み
 	gModelManager["startButton"] = mPoly->CreateSquarePolygon(
-		0.5f, 0.5f, 1.0f, 1.0f, L"assets/Title/title_Button_start.png");
+		0.5f, 0.5f, 1.0f, 1.0f, L"assets/Retry.png");
 
 	// 終了ボタン読み込み
 	gModelManager["quitButton"] = mPoly->CreateSquarePolygon(
 		0.5f, 0.5f, 1.0f, 1.0f, L"assets/Title/title_Button_quit.png");
+
+	gModelManager["ResultChara"] = mPoly->CreateSquarePolygon(
+		0.5f, 0.5f, 1.0f, 1.0f, L"assets/Result_Chara.png");
+
 
 
 	gObjManager["Result"] = new NormalObject();
@@ -180,6 +184,16 @@ void ResultScene::Init()
 	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
 	pModel->mPos.x = 0.6f;
 	pModel->mPos.y = -0.7f;
+	// 画像透明度を上げる(半透明の状態にする)
+
+		// 終了ボタン用オブジェクト生成
+	gObjManager["ResultChara"] = new NormalObject();
+	pModel = gObjManager["ResultChara"]->GetModel();
+	pModel->SetModelData(gModelManager["ResultChara"]);
+	pModel->Set2dRender(true);	// 2D描画への切り替え
+	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
+	pModel->mPos.x = 0.0f;
+	pModel->mPos.y = 0.0f;
 	// 画像透明度を上げる(半透明の状態にする)
 
 
