@@ -328,6 +328,7 @@ void GameScene::Init()
 
 	// ƒƒ“ƒo•Ï”‰Šú‰»
 	frameCount = 0;
+	frameCountChange = 0;
 	playerLanded = false;
 
 	// ’Ç]ƒJƒƒ‰‚ª’Ç]‚·‚é‘ÎÛ‚ðÝ’è
@@ -515,12 +516,18 @@ void GameScene::Update()
 
 		// ƒNƒŠƒAƒƒS‚ð•\Ž¦
 		gObjManager["clearLogo"]->mActive = true;
-
-		// ƒNƒŠƒAƒƒS•\Ž¦‚©‚ç‰½•bŒã‚©‚ÉƒŠƒUƒ‹ƒgƒV[ƒ“‚Ö‘JˆÚ
 	}
 
 	// ƒtƒŒ[ƒ€”‰ÁŽZ
 	frameCount++;
+	if (gObjManager["clearLogo"]->mActive == true) {
+		frameCountChange++;
+	}
+
+	// ƒNƒŠƒAƒƒS•\Ž¦‚©‚ç‰½•bŒã‚©‚ÉƒŠƒUƒ‹ƒgƒV[ƒ“‚Ö‘JˆÚ
+	if (frameCountChange >= 600) {
+		SceneManager::ChangeScene(SceneManager::RESULT);
+	}
 
 }
 

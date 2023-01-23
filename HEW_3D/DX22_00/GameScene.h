@@ -58,6 +58,7 @@ private:
 	ObjModelLoader		loader;				// モデルのローダー
 
 	int					frameCount;			// フレームカウント
+	int					frameCountChange;	// リザルトシーンへ遷移する時のカウント
 	int					nowCombo;			// 現在のコンボ数
 	int					maxCombo;			// 最大コンボ数
 	bool				playerLanded;		// プレイヤーが地面についたかどうか
