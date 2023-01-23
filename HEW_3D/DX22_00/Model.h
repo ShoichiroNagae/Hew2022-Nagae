@@ -95,6 +95,8 @@ public:
 	float mAnimSpeed = 0.004f; // アニメ再生速度(シーン.cppで変更可能)
 	float mAnimTime = 0.000f; // アニメーションの添え字用（時間をカウントする）
 	int nowFlame = 0; //現在のフレーム
+	bool Loop = false;
+
 private:
 	// アニメーションの分割数データ
 	DirectX::XMFLOAT4 mUVSplit = DirectX::XMFLOAT4(0.00f, 0.00f, 0.00f, 0.00f);

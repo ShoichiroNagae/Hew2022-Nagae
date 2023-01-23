@@ -157,6 +157,7 @@ void Model::AnimationUpdate(int setState, int* setFlame)
 	{
 		mAnimTime = 0.0f;
 		nowFlame = 0;
+		this->Loop = true;
 	}
 
 	SetUVAnimation(setState, setFlame[nowFlame]);
