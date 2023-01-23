@@ -515,12 +515,18 @@ void GameScene::Update()
 
 		// クリアロゴを表示
 		gObjManager["clearLogo"]->mActive = true;
-
-		// クリアロゴ表示から何秒後かにリザルトシーンへ遷移
 	}
 
 	// フレーム数加算
 	frameCount++;
+	if (gObjManager["clearLogo"]->mActive == true) {
+		frameCountChange++;
+	}
+
+	// クリアロゴ表示から何秒後かにリザルトシーンへ遷移
+	if (frameCountChange >= 600) {
+		SceneManager::ChangeScene(SceneManager::RESULT);
+	}
 
 }
 
