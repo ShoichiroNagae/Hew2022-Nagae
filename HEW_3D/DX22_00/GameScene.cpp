@@ -451,7 +451,7 @@ void GameScene::Update()
 		if (tmpHit->IsHit(gObjManager["Player"]->GetHit()))
 		{
 			// 当たっているときにボタン入力があったら敵を消す
-			if (SetAnimState = PLAYER2DSTATE::ATTACK)
+			if (SetAnimState == PLAYER2DSTATE::ATTACK)
 			{
 				// プレイヤーの切るアニメーションとか実行？
 
@@ -463,7 +463,7 @@ void GameScene::Update()
 				 gEnemyManager.erase(gEnemyManager.begin() + i);
 			}
 			// 敵に当ってしまったとき
-			else
+			if(SetAnimState == PLAYER2DSTATE::DEFAULT)
 			{
 				// 少し上に吹き飛ぶ
 				Model* pEnemyModel = tmp->GetModel();
@@ -475,7 +475,6 @@ void GameScene::Update()
 						gEnemyManager.erase(gEnemyManager.begin() + i);
 					}
 				}
-				
 				// プレイヤーのスコアとか減らす？
 
 				// コンボを0に戻す
