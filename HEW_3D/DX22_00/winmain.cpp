@@ -64,7 +64,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	
 	// シーンマネージャー生成
 	SceneManager* sceneManager = new SceneManager();
-	sceneManager->ChangeScene(SceneManager::RESULT);
+	sceneManager->ChangeScene(SceneManager::TITLE);
 
 	// フレームコントローラー生成
 	FrameControl* frameCnt = new FrameControl();

@@ -172,14 +172,18 @@ void GameScene::Init()
 
 
 	// モデル読み込み
-	ModelLoad(loader, "ground1", "assets/Game/ground1.obj", L"assets/Game/ground1.jpg");	// 地面
-	ModelLoad(loader, "Player", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/char01.png");		// プレイヤー
-	ModelLoad(loader, "Player", Player2DSize, L"assets/Game/MainPlayer.png");		// プレイヤー(変更要望)
+	ModelLoad(loader, "ground1", "assets/Game/ground1.obj", L"assets/Game/ground1.jpg");		// 地面
+	ModelLoad(loader, "Player", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/char01.png");			// プレイヤー
+	ModelLoad(loader, "Player", Player2DSize, L"assets/Game/MainPlayer.png");					// プレイヤー(変更要望)
 	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/HewEnemy01.png");		// 敵
-	ModelLoad(loader, "Enemy2", "assets/Game/billboard.obj", L"assets/Game/HewEnemy02.png");		// 敵
-	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");		// 背景
+	ModelLoad(loader, "Enemy2", "assets/Game/billboard.obj", L"assets/Game/HewEnemy02.png");	// 敵
+	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");			// 背景
 
-	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");	// クリアロゴ
+	//ModelLoad(loader, "ground1", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver1.png");		// 建物_1
+	//ModelLoad(loader, "ground12", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver1_1.png");	// 建物_2
+	//ModelLoad(loader, "ground2", 2.0f, 2.0f, 1.0f, 1.0f, L"assets/Game/Building_ver2.png");		// 建物_2
+
+	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");		// クリアロゴ
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["Player"] = new BillboardObject();
