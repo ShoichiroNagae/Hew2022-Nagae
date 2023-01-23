@@ -10,6 +10,8 @@
 
 #pragma comment (lib, "winmm.lib") // timeGetTime関数のため
 
+bool GameFlag = false;
+
 // ゲーム初期化関数
 void Initialize(_In_ HINSTANCE hInstance, _In_ int nCmdShow)
 {
@@ -62,14 +64,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	
 	// シーンマネージャー生成
 	SceneManager* sceneManager = new SceneManager();
-	sceneManager->ChangeScene(SceneManager::GAME);
+	sceneManager->ChangeScene(SceneManager::RESULT);
 
 	// フレームコントローラー生成
 	FrameControl* frameCnt = new FrameControl();
 
-	MSG msg;
+	MSG msg{};
 	// メインループ
-	for (;;) {
+	while (GameFlag == false) {
 		// 前回のループからユーザー操作があったか調べる
 		BOOL doesMessageExist = PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);
 

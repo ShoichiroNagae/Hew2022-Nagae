@@ -10,6 +10,7 @@
 #include <DirectXMath.h>
 
 extern ID3D11Buffer* gpConstBuffer; //定数バッファ
+extern bool GameFlag;
 
 // コンストラクタ
 TitleScene::TitleScene()
@@ -61,8 +62,7 @@ void TitleScene::Update()
 			SceneManager::ChangeScene(SceneManager::GAME);
 		}
 		else if (selectNum == 2) {
-			// アプリ終了用シーンを作って、そこに遷移
-			//SceneManager::ChangeScene(SceneManager::QUIT);
+			GameFlag = true;
 		}
 
 	}
