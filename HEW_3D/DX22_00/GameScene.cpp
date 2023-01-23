@@ -9,7 +9,7 @@
 #include "Model.h"
 #include "SceneManager.h"
 
-//#include "AnimationData.h"
+#include "AnimationData.h"
 #include "CreateSquarePolygon.h"
 
 RESULT_DATA BaseScene::mData;
@@ -67,15 +67,15 @@ void GameScene::ModelLoad(ObjModelLoader oml,std::string ModelName,
 	);
 }
 
-// // ビルボードアニメーション関係系用ローダー　　作成::井戸上
-//void GameScene::ModelLoad(ObjModelLoader oml, std::string ModelName,
-//	DirectX::XMFLOAT4 Set_whuv, const wchar_t* pTexFileName)
-//{
-//	oml = ObjModelLoader();
-//	gModelManager[ModelName] = oml.Load(
-//		Set_whuv.x, Set_whuv.y, Set_whuv.z, Set_whuv.w, pTexFileName
-//	);
-//}
+ // ビルボードアニメーション関係系用ローダー　　作成::井戸上
+void GameScene::ModelLoad(ObjModelLoader oml, std::string ModelName,
+	DirectX::XMFLOAT4 Set_whuv, const wchar_t* pTexFileName)
+{
+	oml = ObjModelLoader();
+	gModelManager[ModelName] = oml.Load(
+		Set_whuv.x, Set_whuv.y, Set_whuv.z, Set_whuv.w, pTexFileName
+	);
+}
 
 void GameScene::ObjectCreate(std::string objName, float mScale, float mx, float my, float mz)
 {
@@ -117,7 +117,7 @@ void GameScene::CreateEnemy()
 
 	tmp->mSpeed = -ENEMY_SPEED_DEF;
 	pEnemyModel->SetModelData(gModelManager["Enemy"]);
-	pEnemyModel->SetScale(1.0f);
+	pEnemyModel->SetScale(2.0f);
 	pEnemyModel->mPos.z = EnemyPosZ;
 	pEnemyModel->mPos.x = EnemyPosX;
 	pEnemyModel->mPos.y = EnemyPosY;
@@ -174,8 +174,9 @@ void GameScene::Init()
 	// モデル読み込み
 	ModelLoad(loader, "ground1", "assets/Game/ground1.obj", L"assets/Game/ground1.jpg");	// 地面
 	ModelLoad(loader, "Player", 0.5f, 0.6f, 0.33f, 0.25f, L"assets/Game/char01.png");		// プレイヤー
-	//ModelLoad(loader, "Player", Player2DSize, L"assets/Game/char01.png");		// プレイヤー(変更要望)
-	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/Enemy.png");		// 敵
+	ModelLoad(loader, "Player", Player2DSize, L"assets/Game/MainPlayer.png");		// プレイヤー(変更要望)
+	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/HewEnemy01.png");		// 敵
+	ModelLoad(loader, "Enemy2", "assets/Game/billboard.obj", L"assets/Game/HewEnemy02.png");		// 敵
 	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");		// 背景
 
 	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");	// クリアロゴ
@@ -188,9 +189,9 @@ void GameScene::Init()
 	pModel->mCamera = gpCamera;
 	pModel->mPos.y = 3.0f;
 	HitSphere* pHit = gObjManager["Player"]->GetHit();                                                                                                            
-	pHit->SetHankei(1.0f);
+	pHit->SetHankei(0.4f);
 	gObjManager["Player"]->mSpeed = 0.005f;
-	//pModel->SetUVSplit(Player2DSize); //アニメーション用UVのセット(入れないと動かない。)
+	pModel->SetUVSplit(Player2DSize); //アニメーション用UVのセット(入れないと動かない。)
 
 	// クリアロゴ生成
 	gObjManager["clearLogo"] = new NormalObject();
@@ -353,26 +354,71 @@ void GameScene::Update()
 	if (Input_GetKeyDown('A')) pPlayerModel->mPos.x -= 0.01f;
 	if (Input_GetKeyDown('D')) pPlayerModel->mPos.x += 0.01f;
 // ************************************************************* 
-	//// アニメーション切り替わりテスト
-	//// gObjManagerから別のobjectに切り替える
-	//// if(状態変数)を用意してアニメーションの管理をする
-	//事前にアニメーション用UVのセット（SetUVSplit）を入れないと動かない。Initで設定)
-	//// アニメーション処理
-	//pPlayerModel->AnimationUpdate(PLAYER2DSTATE::BACK, Char2D_kihonFlame);
+	// アニメーション切り替わりテスト
+	// gObjManagerから別のobjectに切り替える
+	// if(状態変数)を用意してアニメーションの管理をする
+	// 事前にアニメーション用UVのセット（SetUVSplit）を入れないと動かない。Initで設定)
+	// アニメーション処理
+	// アニメーションの時間をカウント
 
-	////// 固定表示
-	////pPlayerModel->SetUVAnimation(PLAYER2DSTATE::FRONT, Char2D_kihonFlame[0]);
+	
 
-	////// テクスチャ変更
-	///*if (Input_GetKeyDown(VK_SPACE))
-	//	p2DcharModel->ChangeTexData(L"assets/ground1.jpg");*/
+	switch (SetAnimState)
+	{
+	case DEFAULT:
+		pPlayerModel->AnimationUpdate(PLAYER2DSTATE::DEFAULT, Char2D_DefaultFlame);
+		if (Input_GetKeyTrigger(VK_SPACE)) {// スぺースキーを推したらフラグON
+			SetAnimState = PLAYER2DSTATE::ATTACK;
+			pPlayerModel->mAnimTime = 0.0f;
+			pPlayerModel->mAnimSpeed = 0.01f;
+		}
+
+		break;
+
+	case ATTACK:
+		pPlayerModel->AnimationUpdate(PLAYER2DSTATE::ATTACK, Char2D_AttackFlame);
+		if (pPlayerModel->nowFlame = 0)// 攻撃アニメーションが最後まで行くとフラグOFF
+		{
+			
+		}
+		else
+		{
+			SetAnimState = PLAYER2DSTATE::DEFAULT;
+			pPlayerModel->mAnimTime = 0.0f;
+			pPlayerModel->mAnimSpeed = 0.004f;
+		}
+		break;
+	}
+	//// 固定表示
+	//pPlayerModel->SetUVAnimation(PLAYER2DSTATE::FRONT, Char2D_kihonFlame[0]);
+
+	//// テクスチャ変更
+	/*if (Input_GetKeyDown(VK_SPACE))
+		p2DcharModel->ChangeTexData(L"assets/ground1.jpg");*/
 // **************************************************************	
 	// プレイヤーの移動を制限
 	MoveLimit();
 
 	// 加速・減速
-	if (Input_GetKeyDown('R')) gObjManager["Player"]->mSpeed += 0.0001f;
-	if (Input_GetKeyDown('F')) gObjManager["Player"]->mSpeed -= 0.0001f;
+	if (Input_GetKeyDown('R')) {
+		if (gObjManager["Player"]->mSpeed < 0.01f)
+		{
+			gObjManager["Player"]->mSpeed += 0.0001f;
+		}
+		else if (gObjManager["Player"]->mSpeed < 0.05f) 
+		{
+			gObjManager["Player"]->mSpeed += 0.00005f + (0.0000001f / gObjManager["Player"]->mSpeed);
+		}
+		else
+		{
+			gObjManager["Player"]->mSpeed += 0.0000001f / gObjManager["Player"]->mSpeed;
+		}
+	}
+
+	if (Input_GetKeyDown('F')) {
+		if (gObjManager["Player"]->mSpeed > 0.005f)
+			gObjManager["Player"]->mSpeed -= 0.0001f;
+	}
 
 	// 敵の自動生成
 	if (frameCount == 50) CreateEnemy();
@@ -409,7 +455,7 @@ void GameScene::Update()
 		if (tmpHit->IsHit(gObjManager["Player"]->GetHit()))
 		{
 			// 当たっているときにボタン入力があったら敵を消す
-			if (Input_GetKeyTrigger(VK_SPACE))
+			if (SetAnimState = PLAYER2DSTATE::ATTACK)
 			{
 				// プレイヤーの切るアニメーションとか実行？
 
@@ -423,6 +469,17 @@ void GameScene::Update()
 			// 敵に当ってしまったとき
 			else
 			{
+				// 少し上に吹き飛ぶ
+				Model* pEnemyModel = tmp->GetModel();
+				if (pPlayerModel->mPos.z > pEnemyModel->mPos.z + 1.0f) {
+					if (gObjManager["Player"]->mSpeed > 0.0f)
+					{
+						gObjManager["Player"]->mSpeed = 0.001f;
+						delete gEnemyManager[i];
+						gEnemyManager.erase(gEnemyManager.begin() + i);
+					}
+				}
+				
 				// プレイヤーのスコアとか減らす？
 
 				// コンボを0に戻す
@@ -469,6 +526,7 @@ void GameScene::Update()
 
 	// フレーム数加算
 	frameCount++;
+
 }
 
 void GameScene::Draw()
@@ -494,7 +552,7 @@ void GameScene::Draw()
 	// 地面を全て描画
 	for (int i = 0; i < gGround.size(); i++)
 		gGround[i]->Draw();
-
+	
 	// 敵を全て描画
 	for (int i = 0; i < gEnemyManager.size(); i++)
 		gEnemyManager[i]->Draw();
@@ -504,6 +562,12 @@ void GameScene::Draw()
 		i != gObjManager.end();
 		i++)
 		i->second->Draw();
+
+	// 敵を全て描画
+	for (int i = 0; i < gEnemyManager.size(); i++)
+		gEnemyManager[i]->Draw();
+
+	
 
 	// 弾管理配列の中身をすべて描画する
 	for (int i = 0; i < gShotManager.size(); i++)
