@@ -1,64 +1,46 @@
-#include <tchar.h>
-#include <sstream>
 #include "FrameControl.h"
 
 FrameControl::FrameControl()
 {
-	// 精度を取得
-	QueryPerformanceFrequency(&m_timeFreq);
+	// 取得時間の精度を１ミリ秒に変更
+	timeBeginPeriod(1);
 
-	// 初期計算のために時間を取得
-	QueryPerformanceCounter(&m_timeStart);
-
-	m_frameRate = 0.0f;
+	// メンバ変数の初期化
+	this->Init();
 }
 
 FrameControl::~FrameControl()
 {
+	// 取得時間の精度を元に戻す
+	timeEndPeriod(1);
 }
 
 void FrameControl::ControlFrame(void)
 {
-	// 現在の時間を取得
-	QueryPerformanceCounter(&m_timeEnd);
+	// 参照型変数を定義
+	const DWORD frame = this->m_frameTime;
+	DWORD& now = this->m_nowTime;
+	DWORD& prev = this->m_prevTime;
 
-	// (今の時間 - 前フレームの時間) / 周波数 = 経過時間(秒単位)
-	m_frameTime = static_cast<float>(m_timeEnd.QuadPart - m_timeStart.QuadPart) / static_cast<float>(m_timeFreq.QuadPart);
+	// 現在の時間を保存
+	now = timeGetTime();
 
-	// 時間に余裕があった場合
-	if (m_frameTime < MIN_FRAME_TIME)
+	// 処理終了後、経過時間が規定時間を下回っていたら
+	if (now - prev >= frame)
 	{
-		// ミリ秒に変換する
-		DWORD sleepTime = static_cast<DWORD>((MIN_FRAME_TIME - m_frameTime) * 1000);
-		
-		timeBeginPeriod(1);	// Sleepの精度を上げる
-		Sleep(sleepTime);	// 待つ
-		timeEndPeriod(1);	// 精度を戻す
+		// 規定時間になるまで待つ
+		Sleep(1);
 
-		return;
+		// 現在の時間を更新する
+		now = timeGetTime();
 	}
 
-	// 経過時間が0より大きい場合
-	if (m_frameTime > 0.0) { // 経過時間が0より大きい(こうしないと下の計算でゼロ除算になると思われ)
-		m_frameRate = (m_frameRate * 0.99f) + (0.01f / m_frameTime); // 平均fpsを計算
-#ifdef _DEBUG
-// デバッグ用(デバッガにFSP出す)
-#ifdef UNICODE
-		std::wstringstream stream;
-#else
-		std::stringstream stream;
-#endif
-		stream << m_frameRate << " FPS" << std::endl;
-		// カウンタ付けて10回に1回出力、とかにしないと見づらいかもね
-		OutputDebugString(stream.str().c_str());
-#endif // _DEBUG
-
-	}
-
-	// 入れ替え
-	m_timeStart = m_timeEnd;
+	// 現在の時間を過去の時間として保存する
+	prev = now;
 }
 
 void FrameControl::Init(void)
 {
+	this->m_nowTime = 0;
+	this->m_prevTime = 0;
 }

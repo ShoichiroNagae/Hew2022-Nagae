@@ -146,6 +146,7 @@ ModelData ObjModelLoader::Load(float width, float height, float uvWidth, float u
 	return modelData;
 }
 
+
 void ObjModelLoader::FinSkip()
 {
 	char buf[256];
