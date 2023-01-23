@@ -328,6 +328,7 @@ void GameScene::Init()
 
 	// ƒƒ“ƒo•Ï”‰Šú‰»
 	frameCount = 0;
+	frameCountChange = 0;
 	playerLanded = false;
 
 	// ’Ç]ƒJƒƒ‰‚ª’Ç]‚·‚é‘ÎÛ‚ğİ’è
