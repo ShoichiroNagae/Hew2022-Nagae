@@ -99,7 +99,8 @@ void GameScene::CreateEnemy()
 	std::mt19937 mt(rnd());									//  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
 	std::uniform_int_distribution<> randDecimal(0, 99);		// [0, 99] 範囲の乱数			小数部
 	std::uniform_int_distribution<> randInteger(min, max);	// プレイヤーに見える範囲の乱数	整数部
-	std::uniform_int_distribution<> randY(1, 7);	// Y軸用乱数	整数部
+	std::uniform_int_distribution<> randY(1, 7);			// Y軸用乱数	整数部
+	std::uniform_int_distribution<> randEnm(1, 2);			
 
 	// 敵の位置をランダムで決定
 	float EnemyPosX = randInteger(mt);
@@ -117,6 +118,7 @@ void GameScene::CreateEnemy()
 
 	tmp->mSpeed = -ENEMY_SPEED_DEF;
 	pEnemyModel->SetModelData(gModelManager["Enemy"]);
+	if(randEnm(mt) == 2) 	pEnemyModel->SetModelData(gModelManager["Enemy2"]);
 	pEnemyModel->SetScale(2.0f);
 	pEnemyModel->mPos.z = EnemyPosZ;
 	pEnemyModel->mPos.x = EnemyPosX;
@@ -164,7 +166,7 @@ void GameScene::ShowStart()
 	static int cout = 0;
 	if (frameCount > 40) cout++;
 
-	if (cout > 50) gObjManager["startLogo"]->mActive = false;
+	if (cout > 50 && gObjManager["startLogo"] != nullptr) gObjManager["startLogo"]->mActive = false;
 }
 
 // 初期化
@@ -445,6 +447,8 @@ void GameScene::Update()
 		gDeltaTime = 1;
 	}
 
+	ShowStart();
+
 	// 主人公の移動
 	Model* pPlayerModel = gObjManager["Player"]->GetModel();
 	if (Input_GetKeyDown('W')) pPlayerModel->mPos.y += 0.01f;
@@ -625,9 +629,6 @@ void GameScene::Update()
 	if (frameCountChange >= 600) {
 		SceneManager::ChangeScene(SceneManager::RESULT);
 	}
-
-	ShowStart();
-
 }
 
 void GameScene::Draw()
