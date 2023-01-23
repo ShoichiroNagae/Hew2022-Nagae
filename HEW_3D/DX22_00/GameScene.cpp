@@ -161,6 +161,15 @@ void GameScene::MoveLimit()
 	if (y <= yMin) y = yMin;
 }
 
+void GameScene::ShowStart()
+{
+	static int cout = 0;
+	if (frameCount > 40) cout++;
+
+	if (cout > 50) gObjManager["startLogo"]->mActive = false;
+
+}
+
 // 初期化
 void GameScene::Init()
 {	
@@ -184,6 +193,8 @@ void GameScene::Init()
 	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");		// 背景
 
 	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");	// クリアロゴ
+	ModelLoad(loader, "startLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/start.png");			// スタートロゴ
+
 
 	// 2Dキャラオブジェクト生成
 	gObjManager["Player"] = new BillboardObject();
@@ -205,6 +216,14 @@ void GameScene::Init()
 	pModel->m2dRender = true;
 	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
 	gObjManager["clearLogo"]->mActive = false;
+
+	// スタートロゴ生成
+	gObjManager["startLogo"] = new NormalObject();
+	ObjectCreate("startLogo", 1.0f, 0.0f, 0.0f, 0.0f);
+	pModel = gObjManager["startLogo"]->GetModel();
+	pModel->mCamera = gpCamera;
+	pModel->m2dRender = true;
+	pModel->SetDiffuse(DirectX::XMFLOAT4(1, 1, 1, 0.5f));
 
 	//gModelManager["title"] = CreateSquarePolygon(1.0f, 0.7f, 1.0f, 1.0f, L"assets/TitleLogo640.png");
 	//tmp = new NormalObject();
@@ -428,10 +447,10 @@ void GameScene::Update()
 
 	// 主人公の移動
 	Model* pPlayerModel = gObjManager["Player"]->GetModel();
-	if (Input_GetKeyDown('W')) pPlayerModel->mPos.y += 0.01f;
-	if (Input_GetKeyDown('S')) pPlayerModel->mPos.y -= 0.01f;
-	if (Input_GetKeyDown('A')) pPlayerModel->mPos.x -= 0.01f;
-	if (Input_GetKeyDown('D')) pPlayerModel->mPos.x += 0.01f;
+	if (Input_GetKeyDown('W')) pPlayerModel->mPos.y += 0.02f;
+	if (Input_GetKeyDown('S')) pPlayerModel->mPos.y -= 0.02f;
+	if (Input_GetKeyDown('A')) pPlayerModel->mPos.x -= 0.02f;
+	if (Input_GetKeyDown('D')) pPlayerModel->mPos.x += 0.02f;
 
 // ************************************************************* 
 	// アニメーション切り替わりテスト

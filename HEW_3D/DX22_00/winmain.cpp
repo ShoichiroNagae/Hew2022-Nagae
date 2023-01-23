@@ -66,6 +66,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	// フレームコントローラー生成
 	FrameControl* frameCnt = new FrameControl();
+	frameCnt->Init();
 
 	MSG msg;
 	// メインループ
