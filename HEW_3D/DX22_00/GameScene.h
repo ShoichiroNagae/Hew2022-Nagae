@@ -58,9 +58,14 @@ private:
 	ObjModelLoader		loader;				// モデルのローダー
 
 	int					frameCount;			// フレームカウント
+	int                 frameCount2;        // フレームカウント２
 	int					nowCombo;			// 現在のコンボ数
 	int					maxCombo;			// 最大コンボ数
 	bool				playerLanded;		// プレイヤーが地面についたかどうか
+
+	int Num1digit;// スコア表示(1桁)
+	int Num2digit;// (2桁)
+	int Num3digit;// (3桁)
 
 	// モデルマネージャー
 	// 名前で格納する 呼び出すときはstring型
@@ -70,8 +75,8 @@ private:
 	// エネミーマネージャー
 	std::vector<GameObject*> gEnemyManager;
 
-	// 銃弾マネージャー
-	std::vector<GameObject*> gShotManager;
+	//// 銃弾マネージャー
+	//std::vector<GameObject*> gShotManager;
 
 	//ローダーマネージャー
 	std::vector<ObjModelLoader*> Loader;
@@ -83,6 +88,12 @@ private:
 
 	// 敵を自動で生成する関数
 	void CreateEnemy();
+	void CreateEnemy2();
+
+	// スコア表示
+	void ScoreUpdate();
+	void SetScore(int,Model*);
+
 	// 敵を消してもいいか判定する関数
 	bool CheckEnemy(GameObject* _enemy);
 	// プレイヤーの移動範囲を制限する

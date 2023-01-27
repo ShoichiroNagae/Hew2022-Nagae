@@ -58,6 +58,8 @@ void Direct3D_Release()
 	// DIRECT3D構造体の中の変数について
 	// 解放を行う。
 	COM_SAFE_RELEASE(gpD3D->samplerPoint);
+	COM_SAFE_RELEASE(gpD3D->blendAdd);
+	COM_SAFE_RELEASE(gpD3D->blendSub);
 	COM_SAFE_RELEASE(gpD3D->blendAlpha);
 	COM_SAFE_RELEASE(gpD3D->inputLayout);
 	COM_SAFE_RELEASE(gpD3D->pixelShader);
@@ -109,6 +111,19 @@ BOOL CreateDevice(HWND hWnd)
 	scDesc.SampleDesc.Count = 1;
 	scDesc.SampleDesc.Quality = 0;
 	scDesc.Windowed = TRUE; // ウインドウモードとフルスクリーンモード切り替え
+
+	// 機能レベル
+	D3D_FEATURE_LEVEL featureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_1,					// DirectX11.1対応GPUレベル
+		D3D_FEATURE_LEVEL_11_0,					// DirectX11対応GPUレベル
+		D3D_FEATURE_LEVEL_10_1,					// DirectX10.1対応GPUレベル
+		D3D_FEATURE_LEVEL_10_0,					// DirectX10対応GPUレベル
+		D3D_FEATURE_LEVEL_9_3,					// DirectX9.3対応GPUレベル
+		D3D_FEATURE_LEVEL_9_2,					// DirectX9.2対応GPUレベル
+		D3D_FEATURE_LEVEL_9_1					// Direct9.1対応GPUレベル
+	};
+	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
 
 	HRESULT  hr;
 	// DirectX11デバイス、コンテキスト、スワップチェインの作成
@@ -249,6 +264,18 @@ BOOL CreateShader()
 	BlendDesc.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 
 	hr = gpD3D->device->CreateBlendState(&BlendDesc, &gpD3D->blendAlpha);
+
+	// 加算合成用ブレンドステートを作成
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+
+	hr = gpD3D->device->CreateBlendState(&BlendDesc, &gpD3D->blendAdd);
+
+	// 減算合成
+	BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_COLOR;
+
+	hr = gpD3D->device->CreateBlendState(&BlendDesc, &gpD3D->blendSub);
 
 	if (SUCCEEDED(hr)) {
 		gpD3D->context->OMSetBlendState(gpD3D->blendAlpha, NULL, 0xffffffff);

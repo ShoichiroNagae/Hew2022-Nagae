@@ -16,6 +16,8 @@ struct DIRECT3D
 	ID3D11PixelShader* pixelShader; // ピクセルシェーダー
 	ID3D11InputLayout* inputLayout; // インプットレイアウト
 	ID3D11BlendState* blendAlpha;  // アルファブレンディング用ブレンドステート
+	ID3D11BlendState* blendAdd; // 加算合成用
+	ID3D11BlendState* blendSub; // 減算合成用
 	ID3D11SamplerState* samplerPoint; // ポイント補完用サンプラー
 	ID3D11Texture2D*        depthStencilTexture;
 	ID3D11DepthStencilView* depthStencilView;

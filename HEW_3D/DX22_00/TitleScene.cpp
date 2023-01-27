@@ -62,7 +62,7 @@ void TitleScene::Update()
 		}
 		else if (selectNum == 2) {
 			// アプリ終了用シーンを作って、そこに遷移
-			//SceneManager::ChangeScene(SceneManager::QUIT);
+			// SceneManager::ChangeScene(SceneManager::QUIT);
 		}
 
 	}
@@ -96,14 +96,27 @@ void TitleScene::Draw()
 	// スタートボタンが選択されているとき
 	if (selectNum == 1)
 	{
+		d3d->context->OMSetBlendState(d3d->blendAlpha, NULL, 0xffffffff);// アルファブレンド
+		gObjManager["quitButton"]->Draw();
+
+		d3d->context->OMSetBlendState(d3d->blendAdd, NULL, 0xffffffff);// 加算合成
 		// 選択されているときは透明度を下げる(透明ではなくす)
 		gObjManager["startButton"]->Draw();
+
+		d3d->context->OMSetBlendState(d3d->blendAlpha, NULL, 0xffffffff);// アルファブレンド
 	}
+
 	// 終了ボタンが選択されているとき
 	else if (selectNum == 2)
 	{
+		d3d->context->OMSetBlendState(d3d->blendAlpha, NULL, 0xffffffff);// アルファブレンド
+		gObjManager["startButton"]->Draw();
+
+		d3d->context->OMSetBlendState(d3d->blendAdd, NULL, 0xffffffff);// 加算合成
 		// 選択されているときは透明度を下げる(透明ではなくす)
 		gObjManager["quitButton"]->Draw();
+
+		d3d->context->OMSetBlendState(d3d->blendAlpha, NULL, 0xffffffff);// アルファブレンド
 	}
 
 	gObjManager["title"]->Draw();

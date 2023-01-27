@@ -7,7 +7,8 @@ public:
     enum SCENE {
         TITLE,
         GAME,
-        RESULT
+        RESULT,
+        QUIT,
     };
 
     static void ChangeScene(SCENE scene);     //ƒV[ƒ“‚ğˆø”‚É‚æ‚Á‚Ä•Ï‚¦‚éŠÖ”

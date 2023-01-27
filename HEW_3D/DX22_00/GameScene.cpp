@@ -127,6 +127,109 @@ void GameScene::CreateEnemy()
 	gEnemyManager.emplace_back(tmp);
 }
 
+void GameScene::CreateEnemy2()
+{
+	if (playerLanded) return;
+
+	int min = ENEMY_MIN_XPOS;
+	int max = ENEMY_MAX_XPOS;
+	std::random_device rnd;									// 非決定的な乱数生成器を生成
+	std::mt19937 mt(rnd());									//  メルセンヌ・ツイスタの32ビット版、引数は初期シード値
+	std::uniform_int_distribution<> randDecimal(0, 99);		// [0, 99] 範囲の乱数			小数部
+	std::uniform_int_distribution<> randInteger(min, max);	// プレイヤーに見える範囲の乱数	整数部
+	std::uniform_int_distribution<> randY(1, 7);	// Y軸用乱数	整数部
+
+	// 敵の位置をランダムで決定
+	float EnemyPosX = randInteger(mt);
+	EnemyPosX += (randDecimal(mt) * 0.01f);
+	float EnemyPosY = randY(mt);
+
+	Model* pPlayerModel = gObjManager["Player"]->GetModel();
+	float EnemyPosZ = pPlayerModel->mPos.z + 50.0f;
+	if (EnemyPosZ > GROUND_POS) EnemyPosZ = GROUND_POS - 50.0f;
+
+	// 敵を生成
+	GameObject* tmp = new NormalObject();
+	Model* pEnemyModel = tmp->GetModel();
+	HitSphere* pHit = tmp->GetHit();
+
+	tmp->mSpeed = -ENEMY_SPEED_DEF;
+	pEnemyModel->SetModelData(gModelManager["Enemy2"]);
+	pEnemyModel->SetScale(2.0f);
+	pEnemyModel->mPos.z = EnemyPosZ;
+	pEnemyModel->mPos.x = EnemyPosX;
+	pEnemyModel->mPos.y = EnemyPosY;
+	pEnemyModel->mRotate.y = 90.0f;
+	pHit->SetHankei(1.0f);
+	pEnemyModel->mCamera = gpCamera;
+	gEnemyManager.emplace_back(tmp);
+}
+
+void GameScene::ScoreUpdate()
+{
+	Num1digit = this->nowCombo % 10;
+	Model* pUIModel = gObjManager["Num1"]->GetModel();// １桁
+	SetScore(Num1digit, pUIModel);
+
+	Num2digit = (this->nowCombo - Num1digit) % 10;
+	if (Num2digit <= 0)
+		Num2digit = 0;
+	pUIModel = gObjManager["Num2"]->GetModel();// １桁
+	SetScore(Num2digit, pUIModel);
+
+	Num3digit = (this->nowCombo - Num1digit - Num2digit) % 10;
+	if (Num3digit <= 0)
+		Num3digit = 0;
+	pUIModel = gObjManager["Num3"]->GetModel();// １桁
+	SetScore(Num3digit, pUIModel);
+
+	if (Num2digit != 0) {
+		gObjManager["Num2"]->mActive = true;
+		if (Num3digit != 0) {
+			gObjManager["Num3"]->mActive = true;
+		}
+	}
+	else
+	{
+		if (Num3digit != 0) {
+			gObjManager["Num2"]->mActive = true;
+			gObjManager["Num3"]->mActive = true;
+		}
+		else
+		{
+			gObjManager["Num2"]->mActive = false;
+			gObjManager["Num3"]->mActive = false;
+		}
+	}
+}
+
+void GameScene::SetScore(int Setdigit, Model* SetModel)
+{
+	Model* pModel = SetModel;
+	if (Setdigit == 0)
+		pModel->ChangeTexData(L"assets/Game/Text0.png");
+	if (Setdigit == 1)
+		pModel->ChangeTexData(L"assets/Game/Text1.png");
+	if (Setdigit == 2)
+		pModel->ChangeTexData(L"assets/Game/Text2.png");
+	if (Setdigit == 3)
+		pModel->ChangeTexData(L"assets/Game/Text3.png");
+	if (Setdigit == 4)
+		pModel->ChangeTexData(L"assets/Game/Text4.png");
+	if (Setdigit == 5)
+		pModel->ChangeTexData(L"assets/Game/Text5.png");
+	if (Setdigit == 6)
+		pModel->ChangeTexData(L"assets/Game/Text6.png");
+	if (Setdigit == 7)
+		pModel->ChangeTexData(L"assets/Game/Text7.png");
+	if (Setdigit == 8)
+		pModel->ChangeTexData(L"assets/Game/Text8.png");
+	if (Setdigit == 9)
+		pModel->ChangeTexData(L"assets/Game/Text9.png");
+}
+
+
+
 bool GameScene::CheckEnemy(GameObject* _enemy)
 {
 	Model* Enemy = _enemy->GetModel();
@@ -178,6 +281,10 @@ void GameScene::Init()
 	ModelLoad(loader, "Enemy", "assets/Game/billboard.obj", L"assets/Game/HewEnemy01.png");		// 敵
 	ModelLoad(loader, "Enemy2", "assets/Game/billboard.obj", L"assets/Game/HewEnemy02.png");		// 敵
 	ModelLoad(loader, "BackGround", "assets/Game/ground1.obj", L"assets/ground1.jpg");		// 背景
+
+	ModelLoad(loader, "Num1", "assets/Game/billboard.obj", L"assets/Game/Text0.png");
+	ModelLoad(loader, "Num2", "assets/Game/billboard.obj", L"assets/Game/Text1.png");
+	ModelLoad(loader, "Num3", "assets/Game/billboard.obj", L"assets/Game/Text2.png");
 
 	ModelLoad(loader, "clearLogo", 1.0f, 1.0f, 1.0f, 1.0f, L"assets/Game/clearlogo.png");	// クリアロゴ
 
@@ -325,13 +432,37 @@ void GameScene::Init()
 		gGround.emplace_back(tmp);
 	}
 		
+	// 数字
+	gObjManager["Num1"] = new NormalObject();
+	ObjectCreate("Num1", 1.0f, 0.0f, 0.0f, 0.0f);
+	pModel = gObjManager["Num1"]->GetModel();
+	pModel->mRotate.y = 90.0f;	// プレイヤーをZ軸方向に向ける
+	pModel->mCamera = gpCamera;
+	pModel->mPos.y = 3.0f;
+
+	gObjManager["Num2"] = new NormalObject();
+	ObjectCreate("Num2", 1.0f, 0.0f, 0.0f, 0.0f);
+	pModel = gObjManager["Num2"]->GetModel();
+	pModel->mRotate.y = 90.0f;	// プレイヤーをZ軸方向に向ける
+	pModel->mCamera = gpCamera;
+	pModel->mPos.y = 3.0f;
+
+	gObjManager["Num3"] = new NormalObject();
+	ObjectCreate("Num3", 1.0f, 0.0f, 0.0f, 0.0f);
+	pModel = gObjManager["Num3"]->GetModel();
+	pModel->mRotate.y = 90.0f;	// プレイヤーをZ軸方向に向ける
+	pModel->mCamera = gpCamera;
+	pModel->mPos.y = 3.0f;
+
 
 	// メンバ変数初期化
 	frameCount = 0;
+	frameCount2 = 0;
 	playerLanded = false;
 
 	// 追従カメラが追従する対象を設定
 	((BackCamera*)gpCamera)->SetTarget(gObjManager["Player"]);
+	
 }
 
 void GameScene::Update()
@@ -420,6 +551,9 @@ void GameScene::Update()
 	if (frameCount == 50) CreateEnemy();
 	if (frameCount > 50) frameCount = 0;
 
+	if(frameCount2 == 90) CreateEnemy();
+	if (frameCount2 > 90) frameCount2 = 0;
+
 	// 背景テスト
 	if (Input_GetKeyTrigger('L')) {
 		// オブジェクト生成
@@ -432,6 +566,24 @@ void GameScene::Update()
 		pModel->mPos.z = 500.0f;
 		pModel->mCamera = gpCamera;
 	}
+
+// UI面更新
+	Model* pUIModel = gObjManager["Num1"]->GetModel();// １桁
+	pUIModel->mPos.x = gpCamera->mMainCamera->mEye.x + 1.0f;
+	pUIModel->mPos.y = gpCamera->mMainCamera->mEye.y + 2.0f;
+	pUIModel->mPos.z = gpCamera->mMainCamera->mEye.z + 8.0f;
+
+	pUIModel = gObjManager["Num2"]->GetModel();// ２桁
+	pUIModel->mPos.x = gpCamera->mMainCamera->mEye.x;
+	pUIModel->mPos.y = gpCamera->mMainCamera->mEye.y + 2.0f;
+	pUIModel->mPos.z = gpCamera->mMainCamera->mEye.z + 8.0f;
+
+	pUIModel = gObjManager["Num3"]->GetModel();// ３桁
+	pUIModel->mPos.x = gpCamera->mMainCamera->mEye.x - 1.0f;
+	pUIModel->mPos.y = gpCamera->mMainCamera->mEye.y + 2.0f;
+	pUIModel->mPos.z = gpCamera->mMainCamera->mEye.z + 8.0f;
+
+
 
 	// ゲームオブジェクトを更新
 	for (auto i = gObjManager.begin();
@@ -457,11 +609,14 @@ void GameScene::Update()
 
 				// スコア増加？
 				mData.KILL_ENEMY++;	// 倒した敵の数を増加
-				this->nowCombo++;	// コンボを増加
+				this->nowCombo++;	// コンボを増加rrrrr
+
+				/*gObjManager["Player"]->mSpeed += 0.00001f;*/
 
 				 delete gEnemyManager[i];
 				 gEnemyManager.erase(gEnemyManager.begin() + i);
 			}
+
 			// 敵に当ってしまったとき
 			if(SetAnimState == PLAYER2DSTATE::DEFAULT)
 			{
@@ -494,10 +649,12 @@ void GameScene::Update()
 		}
 	}
 	
+	// スコア表示
+	ScoreUpdate();
 
-	// 弾管理配列の中身をすべて更新する
-	for (int i = 0; i < gShotManager.size(); i++)
-		gShotManager[i]->Update();
+	//// 弾管理配列の中身をすべて更新する
+	//for (int i = 0; i < gShotManager.size(); i++)
+	//	gShotManager[i]->Update();
 
 	// 地面を全て更新
 	for (int i = 0; i < gGround.size(); i++)
@@ -521,7 +678,7 @@ void GameScene::Update()
 
 	// フレーム数加算
 	frameCount++;
-
+	frameCount2++;
 }
 
 void GameScene::Draw()
@@ -544,10 +701,13 @@ void GameScene::Draw()
 
 	// ↓　自前の描画処理をここに書く *******
 
+	// ゲームオブジェクトを描画
+	d3d->context->OMSetBlendState(d3d->blendAlpha, NULL, 0xffffffff);// アルファブレンド
+	
 	// 地面を全て描画
 	for (int i = 0; i < gGround.size(); i++)
 		gGround[i]->Draw();
-	
+
 	// 敵を全て描画
 	for (int i = 0; i < gEnemyManager.size(); i++)
 		gEnemyManager[i]->Draw();
@@ -558,15 +718,13 @@ void GameScene::Draw()
 		i++)
 		i->second->Draw();
 
-	// 敵を全て描画
-	for (int i = 0; i < gEnemyManager.size(); i++)
-		gEnemyManager[i]->Draw();
 
+
+	d3d->context->OMSetBlendState(d3d->blendAdd, NULL, 0xffffffff);// 加算合成
 	
-
-	// 弾管理配列の中身をすべて描画する
-	for (int i = 0; i < gShotManager.size(); i++)
-		gShotManager[i]->Draw();
+	//// 弾管理配列の中身をすべて描画する
+	//for (int i = 0; i < gShotManager.size(); i++)
+	//	gShotManager[i]->Draw();
 
 	// ダブルバッファの切り替え
 	d3d->swapChain->Present(0, 0);

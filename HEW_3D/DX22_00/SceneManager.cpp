@@ -25,7 +25,8 @@ void SceneManager::ChangeScene(SCENE scene) {
     case SCENE::RESULT:
         m_pScene = new ResultScene();     //リザルトシーンを現在のシーンにする
         break;
-    default:
+    case SCENE::QUIT:
+    default: 
         break;
     }
 
